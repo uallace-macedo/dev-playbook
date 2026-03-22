@@ -1,0 +1,29 @@
+# Go
+bin/
+*.exe
+go.work
+
+# Java
+target/
+*.class
+*.jar
+*.war
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# JS / Node
+node_modules/
+dist/
+.npm
+*.log
+
+# IDEs e Sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
