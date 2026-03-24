@@ -13,3 +13,7 @@ Servidor HTTP construído com a biblioteca padrão (v1.22+).
 ### [ArrayList](./data-structures/arraylist)
 Estrutura de lista dinâmica com gerenciamento manual de memória.
 - **Specs:** Generics, Redimensionamento Dinâmico (Grow), Shift de elementos e Bounds Checking.
+
+### [LinkedList](./data-structures/linkedlist)
+Implementação de lista encadeada simples com ponteiros de início e fim.
+- **Specs:** Generics, Otimização de Tail (O(1) para Add), e manipulação manual de ponteiros.
