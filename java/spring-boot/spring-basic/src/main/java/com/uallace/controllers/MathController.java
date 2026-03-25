@@ -20,19 +20,50 @@ public class MathController {
     // sub/x/y
     @RequestMapping("/sub/{x}/{y}")
     public double sub(
-            @PathVariable("x") double x,
-            @PathVariable("y") double y
+            @PathVariable("x") String x,
+            @PathVariable("y") String y
     ) {
-        return x-y;
+        if (isNumeric(x) || isNumeric(y)) throw new IllegalArgumentException("please provide valid numbers");
+        return convertToDouble(x) - convertToDouble(y);
     }
 
     // div/x/y
     @RequestMapping("/div/{x}/{y}")
     public double div(
-            @PathVariable("x") double x,
-            @PathVariable("y") double y
+            @PathVariable("x") String x,
+            @PathVariable("y") String y
     ) {
-        return x/y;
+        if (isNumeric(x) || isNumeric(y)) throw new IllegalArgumentException("please provide valid numbers");
+        return convertToDouble(x) / convertToDouble(y);
+    }
+
+    // mult/x/y
+    @RequestMapping("/times/{x}/{y}")
+    public double times(
+            @PathVariable("x") String x,
+            @PathVariable("y") String y
+    ) {
+        if (isNumeric(x) || isNumeric(y)) throw new IllegalArgumentException("please provide valid numbers");
+        return convertToDouble(x) * convertToDouble(y);
+    }
+
+    // times/x/y
+    @RequestMapping("/avg/{x}/{y}")
+    public double avg(
+            @PathVariable("x") String x,
+            @PathVariable("y") String y
+    ) {
+        if (isNumeric(x) || isNumeric(y)) throw new IllegalArgumentException("please provide valid numbers");
+        return (convertToDouble(x) + convertToDouble(y)) / 2;
+    }
+
+    // times/x/y
+    @RequestMapping("/sqrt/{x}")
+    public double sqrt(
+            @PathVariable("x") String x
+    ) {
+        if (isNumeric(x)) throw new IllegalArgumentException("please provide valid numbers");
+        return Math.sqrt(convertToDouble(x));
     }
 
     private boolean isNumeric(String n) {
