@@ -8,6 +8,7 @@ target/
 *.class
 *.jar
 *.war
+*.mvn/
 
 # Python
 __pycache__/
@@ -25,5 +26,10 @@ dist/
 # IDEs e Sistema
 .vscode/
 .idea/
+*.iml
+*.iws
+*.ipr
+out/
+gen/
 .DS_Store
 Thumbs.db
