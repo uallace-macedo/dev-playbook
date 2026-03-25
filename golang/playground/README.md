@@ -13,6 +13,10 @@ Estudo de funções anônimas e captura de escopo léxico (Lexical Scoping).
 Gerenciamento de endereços de memória e diferenciação entre passagem por valor e referência.
 - **Specs:** Operadores `&` e `*`, Mutabilidade, e análise de Performance (Stack vs Heap).
 
+### [Interfaces](./interfaces)
+Implementação de polimorfismo via Satisfação Implícita (Duck Typing).
+- **Specs:** Conjunto de métodos (Method Sets), Empty Interface (`interface{}` / `any`), Type Assertion e Type Switches.
+
 ## Como Executar
 
 Cada subdiretório representa um pacote isolado. Para testar um conceito específico:
