@@ -24,6 +24,10 @@ Simulação de tipos enumerados utilizando constantes tipadas.
 Implementação de polimorfismo via Satisfação Implícita (Duck Typing).
 - **Specs:** Conjunto de métodos (Method Sets), Empty Interface (`interface{}` / `any`), Type Assertion e Type Switches.
 
+### [Gorountines & Channels](./gorountines/main/gorountines.go)
+Orquestração de concorrência e processamento assíncrono em pipelines de dados.
+- **Specs:** sync.WaitGroup para sincronização de vida, Buffered Channels para comunicação entre produtores/consumidores e for range em canais para encerramento determinístico.
+
 ## Como Executar
 
 Cada subdiretório representa um pacote isolado. Para testar um conceito específico:
