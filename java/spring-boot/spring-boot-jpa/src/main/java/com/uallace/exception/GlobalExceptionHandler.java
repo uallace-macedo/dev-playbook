@@ -1,6 +1,6 @@
 package com.uallace.exception;
 
-import com.uallace.exception.custom.UnsupportedOperation;
+import com.uallace.exception.custom.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,9 +12,8 @@ import java.util.Date;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-
-    @ExceptionHandler(UnsupportedOperation.class)
-    public ResponseEntity<ExceptionResponse> handleMathOperationExceptions(
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleNotFoundExceptions(
             Exception exception, WebRequest request
     ) {
         ExceptionResponse ex = new ExceptionResponse(

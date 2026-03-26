@@ -1,6 +1,10 @@
 package com.uallace.services;
 
+import com.uallace.exception.custom.ResourceNotFoundException;
 import com.uallace.model.Person;
+import com.uallace.model.enums.Gender;
+import com.uallace.repository.PersonRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,43 +17,44 @@ public class PersonService {
     private final AtomicLong counter = new AtomicLong();
     private final Logger logger = Logger.getLogger(PersonService.class.getName());
 
+    @Autowired
+    PersonRepository repository;
+
     public List<Person> findAll() {
         logger.info("finding people");
-        List<Person> people = new ArrayList<Person>();
-
-        for(int i = 0; i < 8; i++) {
-            Person person = mockPerson(i);
-            people.add(person);
-        }
-
-        return people;
+        return repository.findAll();
     }
 
-    public Person findById(String id) {
+    public Person findById(Long id) {
         logger.info("finding a person");
-        Person person = new Person();
-
-        person.setId(counter.incrementAndGet());
-        person.setFirstName("John");
-        person.setLastName("Santos");
-        person.setAddress("Salvador - BA");
-        person.setGender("Male");
-
-        return person;
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("resource with id " + id + " not found"));
     }
 
     public Person create(Person person) {
-        person.setId(counter.incrementAndGet());
-        return person;
+        logger.info("creating person");
+        return repository.save(person);
     }
 
-    private Person mockPerson(int i) {
-        Person person = new Person();
-        person.setId(counter.incrementAndGet());
-        person.setFirstName("Mock Person " + i);
-        person.setLastName("Mock Last Name " + i);
-        person.setAddress("Mock Address " + i);
-        person.setGender(i % 2 == 0 ? "Female" : "Male");
+    public Person update(Person person) {
+        logger.info("updating user");
+        Person old = repository.findById(person.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("resource with id " + person.getId() + " not found"));
+
+        if (old.getFirstName() != null) person.setFirstName(old.getFirstName());
+        if (old.getLastName() != null) person.setLastName(old.getLastName());
+        if (old.getAddress() != null) person.setAddress(old.getAddress());
+        if (old.getGender() != null) person.setGender(old.getGender());
+
+        return repository.save(person);
+    }
+
+    public Person delete(Person person) {
+        logger.info("deleting user");
+        Person old = repository.findById(person.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("resource with id " + person.getId() + " not found"));
+
+        repository.delete(old);
         return person;
     }
 }
