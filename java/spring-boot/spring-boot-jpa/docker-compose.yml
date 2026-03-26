@@ -1,0 +1,9 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: spring-boot-jpa-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: spring-boot-jpa-db
+      MYSQL_ROOT_PASSWORD: root
