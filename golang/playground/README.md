@@ -8,6 +8,10 @@ Laboratório de experimentos focado em validar comportamentos da runtime, sintax
 Estudo de funções anônimas e captura de escopo léxico (Lexical Scoping).
 - **Specs:** Captura de variáveis por referência, State Isolation (Encapsulamento) e Function Factories.
 
+### [Generics](./generics/generics.go)
+Implementação de algoritmos e estruturas de dados independentes de tipo.
+- **Specs:** Type Parameters ([T any]), Type Constraints e Generic Structs (Pilhas/Filas).
+
 ### [Pointers](./pointers/pointers.go)
 Gerenciamento de endereços de memória e diferenciação entre passagem por valor e referência.
 - **Specs:** Operadores `&` e `*`, Mutabilidade, e análise de Performance (Stack vs Heap).
