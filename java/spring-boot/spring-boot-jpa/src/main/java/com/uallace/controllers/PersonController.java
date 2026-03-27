@@ -1,5 +1,6 @@
 package com.uallace.controllers;
 
+import com.uallace.dto.PersonDTO;
 import com.uallace.model.Person;
 import com.uallace.services.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class PersonController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public List<Person> findByAll() {
+    public List<PersonDTO> findByAll() {
         return service.findAll();
     }
 
@@ -29,7 +30,7 @@ public class PersonController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Person findById(@PathVariable("id") Long id) {
+    public PersonDTO findById(@PathVariable("id") Long id) {
         return service.findById(id);
     }
 
@@ -38,7 +39,7 @@ public class PersonController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Person create(@RequestBody Person person) {
+    public PersonDTO create(@RequestBody PersonDTO person) {
         return service.create(person);
     }
 
@@ -48,9 +49,9 @@ public class PersonController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Person update(
+    public PersonDTO update(
             @PathVariable("id") long id,
-            @RequestBody Person person
+            @RequestBody PersonDTO person
     ) {
         return service.update(id, person);
     }

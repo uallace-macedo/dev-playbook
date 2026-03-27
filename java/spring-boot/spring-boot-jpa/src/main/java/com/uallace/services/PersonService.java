@@ -1,6 +1,8 @@
 package com.uallace.services;
 
+import com.uallace.dto.PersonDTO;
 import com.uallace.exception.custom.ResourceNotFoundException;
+import com.uallace.mapper.ObjectMapper;
 import com.uallace.model.Person;
 import com.uallace.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,23 +20,26 @@ public class PersonService {
     @Autowired
     PersonRepository repository;
 
-    public List<Person> findAll() {
+    public List<PersonDTO> findAll() {
         logger.info("finding people");
-        return repository.findAll();
+        return ObjectMapper.parseListObjects(repository.findAll(), PersonDTO.class);
     }
 
-    public Person findById(Long id) {
+    public PersonDTO findById(Long id) {
         logger.info("finding a person");
-        return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("resource with id " + id + " not found"));
+        return ObjectMapper.parseObject(
+                repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("resource with id " + id + " not found")),
+                        PersonDTO.class);
+
     }
 
-    public Person create(Person person) {
+    public PersonDTO create(PersonDTO person) {
         logger.info("creating person");
-        return repository.save(person);
+        Person saved = repository.save(ObjectMapper.parseObject(person, Person.class));
+        return ObjectMapper.parseObject(saved, PersonDTO.class);
     }
 
-    public Person update(long id, Person newData) {
+    public PersonDTO update(long id, PersonDTO newData) {
         logger.info("updating user");
         Person person = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("resource with id " + id + " not found"));
@@ -44,7 +49,7 @@ public class PersonService {
         if (newData.getAddress() != null) person.setAddress(newData.getAddress());
         if (newData.getGender() != null) person.setGender(newData.getGender());
 
-        return repository.save(person);
+        return ObjectMapper.parseObject(repository.save(person), PersonDTO.class);
     }
 
     public void delete(long id) {
