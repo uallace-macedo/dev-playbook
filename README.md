@@ -6,3 +6,4 @@ Repositório de referência técnica para implementações nativas e estudos de 
 
 - [**Golang**](./golang/README.md)
 - [**Java**](./java/README.md)
+- [**C++**](./c++/README.md)
