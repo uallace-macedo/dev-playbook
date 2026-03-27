@@ -33,3 +33,14 @@ out/
 gen/
 .DS_Store
 Thumbs.db
+
+# C++
+*.o
+*.obj
+*.out
+*.a
+*.lib
+*.so
+*.dll
+*.pdb
+*.ilk
