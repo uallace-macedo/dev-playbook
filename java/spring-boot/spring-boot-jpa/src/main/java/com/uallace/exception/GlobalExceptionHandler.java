@@ -22,7 +22,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 request.getDescription(false)
         );
 
-        return new ResponseEntity<ExceptionResponse>(ex, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<ExceptionResponse>(ex, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)
