@@ -20,13 +20,17 @@ Gerenciamento de endereços de memória e diferenciação entre passagem por val
 Simulação de tipos enumerados utilizando constantes tipadas.
 - **Specs**: iota (Auto-increment), Stringer Interface para logs legíveis e segurança de tipos em assinaturas de funções.
 
-### [Interfaces](./interfaces)
+### [Interfaces](./interfaces/interfaces.go)
 Implementação de polimorfismo via Satisfação Implícita (Duck Typing).
 - **Specs:** Conjunto de métodos (Method Sets), Empty Interface (`interface{}` / `any`), Type Assertion e Type Switches.
 
 ### [Gorountines & Channels](./gorountines/main/gorountines.go)
 Orquestração de concorrência e processamento assíncrono em pipelines de dados.
 - **Specs:** sync.WaitGroup para sincronização de vida, Buffered Channels para comunicação entre produtores/consumidores e for range em canais para encerramento determinístico.
+
+### [Mutex](./mutex/mutex.go)
+Estudo de sincronização de estado compartilhado e exclusão mútua.
+- **Specs:** Gerenciamento de Race Conditions, proteção de memória compartilhada com sync.Mutex e controle de concorrência com sync.WaitGroup.
 
 ## Como Executar
 
