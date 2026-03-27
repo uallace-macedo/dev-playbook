@@ -2,12 +2,10 @@ package com.uallace.services;
 
 import com.uallace.exception.custom.ResourceNotFoundException;
 import com.uallace.model.Person;
-import com.uallace.model.enums.Gender;
 import com.uallace.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
@@ -36,25 +34,24 @@ public class PersonService {
         return repository.save(person);
     }
 
-    public Person update(Person person) {
+    public Person update(long id, Person newData) {
         logger.info("updating user");
-        Person old = repository.findById(person.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("resource with id " + person.getId() + " not found"));
+        Person person = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("resource with id " + id + " not found"));
 
-        if (old.getFirstName() != null) person.setFirstName(old.getFirstName());
-        if (old.getLastName() != null) person.setLastName(old.getLastName());
-        if (old.getAddress() != null) person.setAddress(old.getAddress());
-        if (old.getGender() != null) person.setGender(old.getGender());
+        if (newData.getFirstName() != null) person.setFirstName(newData.getFirstName());
+        if (newData.getLastName() != null) person.setLastName(newData.getLastName());
+        if (newData.getAddress() != null) person.setAddress(newData.getAddress());
+        if (newData.getGender() != null) person.setGender(newData.getGender());
 
         return repository.save(person);
     }
 
-    public Person delete(Person person) {
+    public void delete(long id) {
         logger.info("deleting user");
-        Person old = repository.findById(person.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("resource with id " + person.getId() + " not found"));
+        Person person = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("resource with id " + id + " not found"));
 
-        repository.delete(old);
-        return person;
+        repository.delete(person);
     }
 }
