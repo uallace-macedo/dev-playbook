@@ -1,0 +1,11 @@
+{
+  "name": "JOOOHN",
+  "bot": {
+    "token": "abc",
+    "prefix": "cde"
+  },
+  "server": {
+    "config_channel_id": "123@ccid",
+    "first_role_id": "zero two"
+  }
+}

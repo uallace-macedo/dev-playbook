@@ -32,6 +32,10 @@ Orquestração de concorrência e processamento assíncrono em pipelines de dado
 Estudo de sincronização de estado compartilhado e exclusão mútua.
 - **Specs:** Gerenciamento de Race Conditions, proteção de memória compartilhada com sync.Mutex e controle de concorrência com sync.WaitGroup.
 
+### [File Handling](./files/files.go)
+- Estudo de persistência atômica de dados e sincronização de acesso a configurações globais.
+- **Specs:** Escrita atômica em disco (Safe Write)
+
 ## Como Executar
 
 Cada subdiretório representa um pacote isolado. Para testar um conceito específico:
