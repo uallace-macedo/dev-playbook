@@ -6,6 +6,8 @@ using namespace std;
 #define endl << "\n"
 
 signed main() {
+  FAST_INPUT;
+
   int n;
   cin>>n;
 
