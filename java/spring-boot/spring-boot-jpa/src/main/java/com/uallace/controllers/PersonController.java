@@ -1,5 +1,6 @@
 package com.uallace.controllers;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.uallace.dto.PersonDTO;
 import com.uallace.model.Person;
 import com.uallace.services.PersonService;
@@ -34,6 +35,7 @@ public class PersonController {
     public PersonDTO findById(@PathVariable("id") Long id) {
         var person = service.findById(id);
         person.setBirthDay(new Date());
+        person.setSensitiveData("ABACATE");
         return person;
     }
 

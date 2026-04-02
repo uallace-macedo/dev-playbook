@@ -3,6 +3,7 @@ package com.uallace.dto;
 //import com.fasterxml.jackson.annotation.JsonIgnore;
 //import com.fasterxml.jackson.annotation.JsonProperty;
 //import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.uallace.model.enums.Gender;
@@ -12,6 +13,7 @@ import java.util.Date;
 import java.util.Objects;
 
 //@JsonPropertyOrder({"id","firstName","lastName","address","gender"})
+@JsonFilter("PersonFilter")
 public class PersonDTO {
     private static final long serialVersionUID = 1L;
 
@@ -28,6 +30,7 @@ public class PersonDTO {
 
 //    @JsonIgnore
     private String address;
+    private String sensitiveData;
 
     @JsonSerialize(using = GenderSerializer.class)
     private Gender gender;
@@ -89,6 +92,14 @@ public class PersonDTO {
 
     public void setGender(Gender gender) {
         this.gender = gender;
+    }
+
+    public String getSensitiveData() {
+        return sensitiveData;
+    }
+
+    public void setSensitiveData(String sensitiveData) {
+        this.sensitiveData = sensitiveData;
     }
 
     @Override
