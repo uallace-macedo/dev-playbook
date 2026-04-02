@@ -1,32 +1,44 @@
 package com.uallace.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+//import com.fasterxml.jackson.annotation.JsonIgnore;
+//import com.fasterxml.jackson.annotation.JsonProperty;
+//import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.uallace.model.enums.Gender;
+import com.uallace.serializer.GenderSerializer;
 
-@JsonPropertyOrder({"id","firstName","lastName","address","gender"})
+import java.util.Date;
+import java.util.Objects;
+
+//@JsonPropertyOrder({"id","firstName","lastName","address","gender"})
 public class PersonDTO {
     private static final long serialVersionUID = 1L;
 
     private Long id;
 
-    @JsonProperty("first_name")
+//    @JsonProperty("first_name")
     private String firstName;
 
-    @JsonProperty("last_name")
+//    @JsonProperty("last_name")
     private String lastName;
 
-    @JsonIgnore
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private Date birthDay;
+
+//    @JsonIgnore
     private String address;
+
+    @JsonSerialize(using = GenderSerializer.class)
     private Gender gender;
 
     public PersonDTO() {}
 
-    public PersonDTO(Long id, String firstName, String lastName, String address, Gender gender) {
+    public PersonDTO(Long id, String firstName, String lastName, Date birthDay, String address, Gender gender) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.birthDay = birthDay;
         this.address = address;
         this.gender = gender;
     }
@@ -55,6 +67,14 @@ public class PersonDTO {
         this.lastName = lastName;
     }
 
+    public Date getBirthDay() {
+        return birthDay;
+    }
+
+    public void setBirthDay(Date birthDay) {
+        this.birthDay = birthDay;
+    }
+
     public String getAddress() {
         return address;
     }
@@ -69,5 +89,16 @@ public class PersonDTO {
 
     public void setGender(Gender gender) {
         this.gender = gender;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof PersonDTO personDTO)) return false;
+        return Objects.equals(getId(), personDTO.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
     }
 }
