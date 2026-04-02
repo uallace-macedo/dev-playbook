@@ -1,13 +1,23 @@
 package com.uallace.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.uallace.model.enums.Gender;
 
+@JsonPropertyOrder({"id","firstName","lastName","address","gender"})
 public class PersonDTO {
     private static final long serialVersionUID = 1L;
 
     private Long id;
+
+    @JsonProperty("first_name")
     private String firstName;
+
+    @JsonProperty("last_name")
     private String lastName;
+
+    @JsonIgnore
     private String address;
     private Gender gender;
 
