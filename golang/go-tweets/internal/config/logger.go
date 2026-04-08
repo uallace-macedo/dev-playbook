@@ -14,15 +14,23 @@ type Logger struct {
 	writer  io.Writer
 }
 
+const (
+	reset  = "\033[0m"
+	red    = "\033[31m"
+	green  = "\033[32m"
+	yellow = "\033[33m"
+	blue   = "\033[34m"
+)
+
 func NewLogger(p string) *Logger {
 	writer := io.Writer(os.Stdout)
 	logger := log.New(writer, p, log.Ldate|log.Ltime)
 
 	return &Logger{
-		debug:   log.New(log.Writer(), "[DEBUG] ", log.Flags()),
-		info:    log.New(log.Writer(), "[INFO] ", log.Flags()),
-		warning: log.New(log.Writer(), "[WARNING] ", log.Flags()),
-		err:     log.New(log.Writer(), "[ERROR] ", log.Flags()),
+		debug:   log.New(log.Writer(), blue+"[DEBUG] "+reset, log.Flags()),
+		info:    log.New(log.Writer(), green+"[INFO] "+reset, log.Flags()),
+		warning: log.New(log.Writer(), yellow+"[WARNING] "+reset, log.Flags()),
+		err:     log.New(log.Writer(), red+"[ERROR] "+reset, log.Flags()),
 		writer:  logger.Writer(),
 	}
 }
