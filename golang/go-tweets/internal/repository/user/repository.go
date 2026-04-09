@@ -1,8 +1,16 @@
 package user
 
-import "github.com/jmoiron/sqlx"
+import (
+	"context"
 
-type UserRepository interface{}
+	"github.com/jmoiron/sqlx"
+	"github.com/uallace-macedo/dev-playbook/golang/go-tweets/internal/model"
+)
+
+type UserRepository interface {
+	GetUserByEmailOrUsername(ctx context.Context, email, username string) (*model.UserModel, error)
+	CreateUser(ctx context.Context, user *model.UserModel) (int64, error)
+}
 
 type userRepository struct {
 	db *sqlx.DB

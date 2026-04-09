@@ -1,11 +1,16 @@
 package user
 
 import (
+	"context"
+
 	"github.com/uallace-macedo/dev-playbook/golang/go-tweets/internal/config"
+	"github.com/uallace-macedo/dev-playbook/golang/go-tweets/internal/dto"
 	"github.com/uallace-macedo/dev-playbook/golang/go-tweets/internal/repository/user"
 )
 
-type UserService interface{}
+type UserService interface {
+	Register(ctx context.Context, req *dto.RegisterRequest) (int64, int, error)
+}
 
 type userService struct {
 	cfg      *config.Config

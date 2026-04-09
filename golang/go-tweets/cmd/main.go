@@ -1,10 +1,12 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/uallace-macedo/dev-playbook/golang/go-tweets/internal/config"
+
+	userHandler "github.com/uallace-macedo/dev-playbook/golang/go-tweets/internal/handler/user"
+	userRepo "github.com/uallace-macedo/dev-playbook/golang/go-tweets/internal/repository/user"
+	userService "github.com/uallace-macedo/dev-playbook/golang/go-tweets/internal/service/user"
 	"github.com/uallace-macedo/dev-playbook/golang/go-tweets/pkg/internalsql"
 )
 
@@ -17,7 +19,7 @@ func main() {
 		return
 	}
 
-	_, err = internalsql.ConnectMySQL(cfg)
+	db, err := internalsql.ConnectMySQL(cfg)
 	if err != nil {
 		l.Error(err)
 		return
@@ -28,11 +30,10 @@ func main() {
 	r := gin.Default()
 	r.Use(gin.Recovery())
 
-	r.GET("/check-health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "OK",
-		})
-	})
+	userRepo := userRepo.NewUserRepository(db)
+	userService := userService.NewUserService(cfg, userRepo)
+	userHandler := userHandler.NewHandler(r, userService)
+	userHandler.RouteList()
 
 	r.Run(cfg.APIPort)
 }
