@@ -30,7 +30,7 @@ func LoadConfig(l *Logger) (*Config, error) {
 	return &Config{
 		DBUrlMigration: os.Getenv("DATABASE_URL"),
 
-		DBHost:     os.Getenv("DATABASE_URL"),
+		DBHost:     os.Getenv("DB_HOST"),
 		DBUser:     os.Getenv("DB_USER"),
 		DBPassword: os.Getenv("DB_PASSWORD"),
 		DBPort:     os.Getenv("DB_PORT"),
