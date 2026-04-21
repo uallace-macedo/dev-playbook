@@ -30,7 +30,7 @@ int main() {
 
   int n1 = 2;
   vector<vector<int>> trust1 = {{1,2}};
-  cout << "Test 1: " << sol.findJudge(n1, trust1) << " (Waited 2)" << endl;
+  cout << "Test 1: " << sol.findJudge(n1, trust1) << " (Waited 2)" << endl; 
 
   int n2 = 3;
   vector<vector<int>> trust2 = {{1, 3}, {2, 3}};
