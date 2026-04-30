@@ -1,0 +1,12 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: unit_tests_db
+    ports:
+      - "4000:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=unit_tests_db
+    volumes:
+      - ./db/migrations:/docker-entrypoint-initdb.d
