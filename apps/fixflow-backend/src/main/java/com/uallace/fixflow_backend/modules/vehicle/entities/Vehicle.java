@@ -1,37 +1,41 @@
-package com.uallace.fixflow_backend.modules.customer.entities;
+package com.uallace.fixflow_backend.modules.vehicle.entities;
 
-import com.uallace.fixflow_backend.modules.vehicle.entities.Vehicle;
+import com.uallace.fixflow_backend.modules.customer.entities.Customer;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.UUID;
 
-@Table(name = "tb_customer")
+@Table(name = "tb_vehicle")
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Customer {
+public class Vehicle {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "customer_id", nullable = false)
+    private Customer customer;
 
-    @Column(unique = true, nullable = false)
-    private String email;
+    @Column(name = "license_plate", length = 15, nullable = false, unique = true)
+    private String licensePlate;
 
-    @Column(length = 20)
-    private String phone;
+    @Column(length = 50, nullable = false)
+    private String make;
 
-    @Column(unique = true, nullable = false)
-    private String cpf;
+    @Column(length = 50, nullable = false)
+    private String model;
+
+    @Column(nullable = false)
+    private short year;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
@@ -40,7 +44,4 @@ public class Customer {
     @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
     private OffsetDateTime updatedAt;
-
-    @OneToMany(mappedBy = "customer")
-    private List<Vehicle> vehicles;
 }
