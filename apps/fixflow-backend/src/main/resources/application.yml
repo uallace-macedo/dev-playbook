@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: fixflow-backend
+
+  datasource:
+    url: ${DB_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+server:
+  port: ${API_PORT}
