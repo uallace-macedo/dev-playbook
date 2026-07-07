@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Year;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -27,7 +28,7 @@ public class VehicleService {
     }
 
     public Vehicle save(UUID customerId, Vehicle vehicle) {
-        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new CustomerNotFoundException("Cliente de id '" + customerId + "' não foi encontrado."));
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new CustomerNotFoundException(customerId));
         if(vehicleRepository.existsByLicensePlate(vehicle.getLicensePlate())) throw new LicensePlateAlreadyExistsException("Placa '" + vehicle.getLicensePlate() + "' já está cadastrada!");
         if(1880 > vehicle.getYear() || vehicle.getYear() > (Year.now().getValue() + 1)) throw new InvalidVehicleYearException("O ano do veículo deve estar entre 1880 e " + (Year.now().getValue() + 1));
 
@@ -41,5 +42,9 @@ public class VehicleService {
 
     public Vehicle findByLicensePlate(String licensePlate) {
         return vehicleRepository.findByLicensePlate(licensePlate).orElseThrow(() -> new VehicleNotFoundException("Veículo com placa '" + licensePlate + "' não foi encontrado."));
+    }
+
+    public List<Vehicle> findByCustomerId(UUID customerId) {
+        return vehicleRepository.findByCustomerId(customerId);
     }
 }

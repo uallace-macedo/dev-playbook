@@ -9,6 +9,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 @Mapper(
         componentModel = "spring",
         uses = { CustomerMapper.class },
@@ -18,7 +20,9 @@ public interface VehicleMapper {
     VehicleMapper INSTANCE = Mappers.getMapper(VehicleMapper.class);
 
     VehicleResponseDTO toDTO(Vehicle vehicle);
+    List<VehicleResponseDTO> toDTO(List<Vehicle> vehicles);
     VehicleCompleteResponseDTO toCompleteDTO(Vehicle vehicle);
 
     Vehicle toEntity(CreateVehicleDTO dto);
+    Vehicle toEntity(com.uallace.fixflow_backend.modules.customer.controllers.dto.CreateVehicleDTO dto);
 }
