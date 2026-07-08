@@ -46,7 +46,7 @@ public class ItemController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable("id") String id, @RequestBody UpdateItemDTO itemDTO) {
-        if(itemDTO.name() == null && itemDTO.price() == null) return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        if(itemDTO.name() == null && itemDTO.price() == null && itemDTO.quantity() == null) return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
         Item item = itemMapper.toEntity(itemDTO);
         return ResponseEntity.status(HttpStatus.OK).body(

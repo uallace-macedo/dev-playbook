@@ -1,10 +1,7 @@
 package com.uallace.fixflow_backend.modules.item.services;
 
 import com.uallace.fixflow_backend.modules.item.entities.Item;
-import com.uallace.fixflow_backend.modules.item.exceptions.ItemInvalidIDException;
-import com.uallace.fixflow_backend.modules.item.exceptions.ItemInvalidPriceException;
-import com.uallace.fixflow_backend.modules.item.exceptions.ItemNameAlreadyExistsException;
-import com.uallace.fixflow_backend.modules.item.exceptions.ItemNotFoundException;
+import com.uallace.fixflow_backend.modules.item.exceptions.*;
 import com.uallace.fixflow_backend.modules.item.repositories.ItemRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +17,7 @@ public class ItemService {
 
     public Item save(Item item) {
         if(itemRepository.existsByName(item.getName())) throw new ItemNameAlreadyExistsException(item.getName());
+        if(item.getQuantity() == null || 0 > item.getQuantity()) item.setQuantity(0);
         return itemRepository.save(item);
     }
 
@@ -51,6 +49,11 @@ public class ItemService {
         if(item.getPrice() != null) {
             if(0 >= item.getPrice().compareTo(BigDecimal.ZERO)) throw new ItemInvalidPriceException("Preço do item não pode ser 0 ou menor!");
             actual.setPrice(item.getPrice());
+        }
+
+        if(item.getQuantity() != null) {
+            if (0 > item.getQuantity()) throw new ItemInvalidQuantityException("Quantidade não pode ser menor que 0");
+            actual.setQuantity(item.getQuantity());
         }
 
         return actual;

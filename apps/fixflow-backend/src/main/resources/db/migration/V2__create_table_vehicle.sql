@@ -8,5 +8,5 @@ CREATE TABLE tb_vehicle (
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_vehicle_customer_id FOREIGN KEY (customer_id) REFERENCES tb_customer(id)
+    CONSTRAINT fk_vehicle_customer_id FOREIGN KEY (customer_id) REFERENCES tb_customer(id) ON DELETE CASCADE
 );

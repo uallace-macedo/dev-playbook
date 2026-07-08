@@ -1,6 +1,5 @@
 package com.uallace.fixflow_backend.modules.item.controllers.dto;
 
-import com.uallace.fixflow_backend.modules.item.entities.ItemType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +16,5 @@ public record CreateItemDTO(
     @Min(value = 1, message = "O preço deve ser no mínimo 1!")
     BigDecimal price,
 
-    @NotNull(message = "O tipo do item é obrigatório: <PART,SERVICE>")
-    ItemType type
+    Integer quantity
 ) {}

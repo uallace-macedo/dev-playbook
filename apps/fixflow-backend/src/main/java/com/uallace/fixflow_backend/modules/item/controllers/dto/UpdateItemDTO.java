@@ -4,5 +4,6 @@ import java.math.BigDecimal;
 
 public record UpdateItemDTO(
    String name,
-   BigDecimal price
+   BigDecimal price,
+   Integer quantity
 ) {}

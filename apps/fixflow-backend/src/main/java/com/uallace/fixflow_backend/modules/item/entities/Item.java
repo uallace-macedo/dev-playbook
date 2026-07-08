@@ -27,8 +27,8 @@ public class Item {
     @Column(nullable = false)
     private BigDecimal price;
 
-    @Enumerated(EnumType.STRING)
-    private ItemType type;
+    @Column(nullable = false)
+    private Integer quantity;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
