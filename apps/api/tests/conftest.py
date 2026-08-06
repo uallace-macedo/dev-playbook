@@ -8,6 +8,7 @@ from vfdelivery.core.database import get_session, table_registry
 from vfdelivery.core.password import SecurePassword
 from vfdelivery.main import app
 from vfdelivery.models.customer import Customer
+from vfdelivery.models.restaurant import Restaurant
 
 
 @pytest.fixture
@@ -50,3 +51,19 @@ def customer(session) -> Customer:
     session.refresh(customer)
 
     return customer
+
+
+@pytest.fixture
+def restaurant(session) -> Restaurant:
+    restaurant = Restaurant(
+        name='test',
+        email='test@email.com',
+        password=SecurePassword.hash(password='secret')
+    )
+
+    session.add(restaurant)
+    session.commit()
+    session.refresh(restaurant)
+
+    return restaurant
+
