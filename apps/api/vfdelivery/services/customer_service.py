@@ -1,13 +1,12 @@
 from http import HTTPStatus
-from typing import Annotated
 
-from fastapi import Depends, HTTPException
+from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from vfdelivery.core.database import get_session
+from vfdelivery.core.deps import SESSION
 from vfdelivery.core.password import SecurePassword
 from vfdelivery.models.customer import Customer
 from vfdelivery.schemas.customer_schemas import CustomerCreate
@@ -54,9 +53,6 @@ class CustomerService:
             )
 
         return customer
-
-
-SESSION = Annotated[Session, Depends(get_session)]
 
 
 def get_customer_service(session: SESSION) -> CustomerService:
