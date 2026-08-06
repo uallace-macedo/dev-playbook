@@ -1,5 +1,7 @@
 from http import HTTPStatus
+
 from vfdelivery.schemas.customer_schemas import CustomerPublic
+
 
 def test_create_customer(client):
     response = client.post(

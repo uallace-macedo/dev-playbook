@@ -2,12 +2,11 @@ from http import HTTPStatus
 
 import pytest
 from fastapi import HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 
+from vfdelivery.models.customer import Customer
 from vfdelivery.schemas.customer_schemas import CustomerCreate
 from vfdelivery.services.customer_service import CustomerService, get_customer_service
-from vfdelivery.models.customer import Customer
-
-from fastapi.security import OAuth2PasswordRequestForm
 
 
 def test_create_customer(session):
@@ -57,7 +56,7 @@ def test_login_customer(session, customer):
 
 def test_login_customer_fail_no_user(session):
     service: CustomerService = get_customer_service(session)
-    
+
     data = OAuth2PasswordRequestForm(
         username='test@email.com',
         password='secret'
@@ -72,7 +71,7 @@ def test_login_customer_fail_no_user(session):
 
 def test_login_customer_fail_wrong_password(session, customer):
     service: CustomerService = get_customer_service(session)
-    
+
     data = OAuth2PasswordRequestForm(
         username=customer.email,
         password='wrong-password'

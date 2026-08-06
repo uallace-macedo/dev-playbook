@@ -2,14 +2,12 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
+from sqlalchemy.pool import StaticPool
 
 from vfdelivery.core.database import get_session, table_registry
-from vfdelivery.main import app
-
-from vfdelivery.schemas.customer_schemas import CustomerCreate
-from vfdelivery.models.customer import Customer
 from vfdelivery.core.password import SecurePassword
-from sqlalchemy.pool import StaticPool
+from vfdelivery.main import app
+from vfdelivery.models.customer import Customer
 
 
 @pytest.fixture
