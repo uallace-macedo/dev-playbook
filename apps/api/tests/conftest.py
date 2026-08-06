@@ -2,14 +2,13 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
+from sqlalchemy.pool import StaticPool
 
 from vfdelivery.core.database import get_session, table_registry
-from vfdelivery.main import app
-
-from vfdelivery.schemas.customer_schemas import CustomerCreate
-from vfdelivery.models.customer import Customer
 from vfdelivery.core.password import SecurePassword
-from sqlalchemy.pool import StaticPool
+from vfdelivery.main import app
+from vfdelivery.models.customer import Customer
+from vfdelivery.models.restaurant import Restaurant
 
 
 @pytest.fixture
@@ -52,3 +51,19 @@ def customer(session) -> Customer:
     session.refresh(customer)
 
     return customer
+
+
+@pytest.fixture
+def restaurant(session) -> Restaurant:
+    restaurant = Restaurant(
+        name='test',
+        email='test@email.com',
+        password=SecurePassword.hash(password='secret')
+    )
+
+    session.add(restaurant)
+    session.commit()
+    session.refresh(restaurant)
+
+    return restaurant
+

@@ -1,11 +1,11 @@
 from http import HTTPStatus
 
-from vfdelivery.schemas.customer_schemas import CustomerPublic
+from vfdelivery.schemas.restaurant_schemas import RestaurantPublic
 
 
-def test_create_customer(client):
+def test_create_restaurant(client):
     response = client.post(
-        '/api/v1/customers',
+        '/api/v1/restaurants',
         json={
             'name': 'test',
             'email': 'test@email.com',
@@ -17,18 +17,18 @@ def test_create_customer(client):
     assert 'id' in response.json()
 
 
-def test_login_customer(client, customer):
+def test_login_restaurant(client, restaurant):
     response = client.post(
-        '/api/v1/customers/login',
+        '/api/v1/restaurants/login',
         data={
-            'username': customer.email,
+            'username': restaurant.email,
             'password': 'secret'
         }
     )
 
-    public_response = CustomerPublic.model_validate(response.json()).model_dump()
+    public_response = RestaurantPublic.model_validate(response.json()).model_dump()
 
     assert response.status_code == HTTPStatus.OK
     assert 'id' in public_response
-    assert public_response['name'] == customer.name
-    assert public_response['email'] == customer.email
+    assert public_response['name'] == restaurant.name
+    assert public_response['email'] == restaurant.email

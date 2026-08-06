@@ -2,8 +2,8 @@ from http import HTTPStatus
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
-from fastapi.security import OAuth2PasswordRequestForm
 
+from vfdelivery.core.deps import LOGIN_FORM_DATA
 from vfdelivery.schemas.customer_schemas import (
     CustomerCreate,
     CustomerPublic,
@@ -15,7 +15,6 @@ from vfdelivery.services.customer_service import (
 
 router = APIRouter(prefix='/customers', tags=['Customers'])
 CUSTOMER_SERVICE = Annotated[CustomerService, Depends(get_customer_service)]
-LOGIN_FORM_DATA = Annotated[OAuth2PasswordRequestForm, Depends()]
 
 
 @router.post(

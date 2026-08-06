@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from vfdelivery.routes.customer_router import router as customer_router
+from vfdelivery.routes.restaurant_router import router as restaurant_router
 
 app = FastAPI(
     title='VFDelivery',
@@ -10,6 +11,7 @@ app = FastAPI(
 
 
 app.include_router(customer_router)
+app.include_router(restaurant_router)
 
 
 @app.get('')
