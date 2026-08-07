@@ -1,7 +1,5 @@
 from http import HTTPStatus
 
-from vfdelivery.schemas.customer_schemas import CustomerPublic
-
 
 def test_create_customer(client):
     response = client.post(
@@ -26,9 +24,7 @@ def test_login_customer(client, customer):
         }
     )
 
-    public_response = CustomerPublic.model_validate(response.json()).model_dump()
-
     assert response.status_code == HTTPStatus.OK
-    assert 'id' in public_response
-    assert public_response['name'] == customer.name
-    assert public_response['email'] == customer.email
+    assert 'access_token' in response.json()
+    assert 'token_type' in response.json()
+    assert response.json()['token_type'] == 'Bearer'

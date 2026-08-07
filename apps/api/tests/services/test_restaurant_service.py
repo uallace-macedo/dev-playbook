@@ -4,7 +4,7 @@ import pytest
 from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
-from vfdelivery.models.restaurant import Restaurant
+from vfdelivery.schemas.public_schemas import AuthToken
 from vfdelivery.schemas.restaurant_schemas import RestaurantCreate
 from vfdelivery.services.restaurant_service import (
     RestaurantService,
@@ -52,8 +52,9 @@ def test_login_restaurant(session, restaurant):
 
     result = service.login_restaurant(data)
 
-    assert isinstance(result, Restaurant)
-    assert result == restaurant
+    assert isinstance(result, AuthToken)
+    assert result.access_token is not None
+    assert result.token_type == 'Bearer'
 
 
 def test_login_customer_fail_no_user(session):
