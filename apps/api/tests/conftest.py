@@ -6,9 +6,11 @@ from sqlalchemy.pool import StaticPool
 
 from vfdelivery.core.database import get_session, table_registry
 from vfdelivery.core.password import SecurePassword
+from vfdelivery.core.token import generate_access_token
 from vfdelivery.main import app
 from vfdelivery.models.customer import Customer
 from vfdelivery.models.restaurant import Restaurant
+from vfdelivery.schemas.public_schemas import AuthToken
 
 
 @pytest.fixture
@@ -66,3 +68,11 @@ def restaurant(session) -> Restaurant:
     session.refresh(restaurant)
 
     return restaurant
+
+
+@pytest.fixture
+def customer_token(customer) -> AuthToken:
+    data = {'sub': customer.email}
+    access_token = generate_access_token(data)
+
+    return AuthToken(access_token=access_token)

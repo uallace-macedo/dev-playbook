@@ -1,5 +1,7 @@
 from http import HTTPStatus
 
+from vfdelivery.schemas.restaurant_schemas import RestaurantPublic
+
 
 def test_create_restaurant(client):
     response = client.post(
@@ -28,3 +30,15 @@ def test_login_restaurant(client, restaurant):
     assert 'access_token' in response.json()
     assert 'token_type' in response.json()
     assert response.json()['token_type'] == 'Bearer'
+
+
+def test_get_restaurants(client, restaurant, customer_token):
+    response = client.get(
+        '/api/v1/restaurants',
+        headers={'Authorization': f'Bearer {customer_token.access_token}'}
+    )
+
+    restaurant_public = RestaurantPublic.model_validate(restaurant).model_dump(mode='json')
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json()['restaurants'][0] == restaurant_public
