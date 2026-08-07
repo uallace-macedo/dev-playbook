@@ -66,4 +66,3 @@ def restaurant(session) -> Restaurant:
     session.refresh(restaurant)
 
     return restaurant
-
