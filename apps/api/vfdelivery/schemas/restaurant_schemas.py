@@ -21,3 +21,7 @@ class RestaurantPublic(RestaurantBase):
     model_config = ConfigDict(
         from_attributes=True
     )
+
+
+class RestaurantList(BaseModel):
+    restaurants: list[RestaurantPublic]
