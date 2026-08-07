@@ -4,8 +4,8 @@ import pytest
 from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
-from vfdelivery.models.customer import Customer
 from vfdelivery.schemas.customer_schemas import CustomerCreate
+from vfdelivery.schemas.public_schemas import AuthToken
 from vfdelivery.services.customer_service import CustomerService, get_customer_service
 
 
@@ -50,8 +50,9 @@ def test_login_customer(session, customer):
 
     result = service.login_customer(data)
 
-    assert isinstance(result, Customer)
-    assert result == customer
+    assert isinstance(result, AuthToken)
+    assert result.access_token is not None
+    assert result.token_type == 'Bearer'
 
 
 def test_login_customer_fail_no_user(session):

@@ -8,8 +8,10 @@ from sqlalchemy.orm import Session
 
 from vfdelivery.core.deps import SESSION
 from vfdelivery.core.password import SecurePassword
+from vfdelivery.core.token import generate_access_token
 from vfdelivery.models.customer import Customer
 from vfdelivery.schemas.customer_schemas import CustomerCreate
+from vfdelivery.schemas.public_schemas import AuthToken
 
 
 class CustomerService:
@@ -35,7 +37,7 @@ class CustomerService:
 
         return customer
 
-    def login_customer(self, data: OAuth2PasswordRequestForm) -> Customer:
+    def login_customer(self, data: OAuth2PasswordRequestForm) -> AuthToken:
         customer = self.session.scalar(
             select(Customer).where(Customer.email == data.username)
         )
@@ -52,7 +54,8 @@ class CustomerService:
                 detail='Invalid email or password'
             )
 
-        return customer
+        access_token = generate_access_token({'sub': customer.email})
+        return AuthToken(access_token=access_token)
 
 
 def get_customer_service(session: SESSION) -> CustomerService:
