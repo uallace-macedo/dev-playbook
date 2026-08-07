@@ -18,8 +18,8 @@ SECRET_KEY: str = settings.JWT_SECRET
 ALGORITHM: str = 'HS256'
 TOKEN_EXP_MINUTES: int = 30
 
-OAUTH2_SCHEMA_CUSTOMER = OAuth2PasswordBearer(tokenUrl='/customer/login')
-OAUTH2_SCHEMA_RESTAURANT = OAuth2PasswordBearer(tokenUrl='/restaurant/login')
+OAUTH2_SCHEMA_CUSTOMER = OAuth2PasswordBearer(tokenUrl='api/v1/customers/login')
+OAUTH2_SCHEMA_RESTAURANT = OAuth2PasswordBearer(tokenUrl='api/v1/restaurants/login')
 
 OSCustomer = Annotated[OAuth2PasswordBearer, Depends(OAUTH2_SCHEMA_CUSTOMER)]
 OSRestaurant = Annotated[OAuth2PasswordBearer, Depends(OAUTH2_SCHEMA_RESTAURANT)]
