@@ -38,7 +38,9 @@ def test_get_restaurants(client, restaurant, customer_token):
         headers={'Authorization': f'Bearer {customer_token.access_token}'}
     )
 
-    restaurant_public = RestaurantPublic.model_validate(restaurant).model_dump(mode='json')
+    restaurant_public = RestaurantPublic.model_validate(
+        restaurant
+    ).model_dump(mode='json')
 
     assert response.status_code == HTTPStatus.OK
     assert response.json()['restaurants'][0] == restaurant_public
