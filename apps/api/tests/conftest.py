@@ -19,8 +19,8 @@ def client(session):
     def get_session_override():
         yield session
 
+    app.dependency_overrides[get_session] = get_session_override
     with TestClient(app) as client:
-        app.dependency_overrides[get_session] = get_session_override
         yield client
 
     app.dependency_overrides.clear()
@@ -74,6 +74,14 @@ def restaurant(session) -> Restaurant:
 @pytest.fixture
 def customer_token(customer) -> AuthToken:
     data = {'sub': customer.email}
+    access_token = generate_access_token(data)
+
+    return AuthToken(access_token=access_token)
+
+
+@pytest.fixture
+def restaurant_token(restaurant) -> AuthToken:
+    data = {'sub': restaurant.email}
     access_token = generate_access_token(data)
 
     return AuthToken(access_token=access_token)

@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Sequence
 from uuid import UUID
 
 from fastapi import HTTPException
@@ -55,6 +56,36 @@ class ProductService:
         self.session.refresh(product)
 
         return product
+
+    def get_products_by_restaurant(
+        self,
+        restaurant_id: UUID,
+        *,
+        limit: int = 10,
+        offset: int = 0,
+        name: str = None
+    ) -> Sequence[Product]:
+        restaurant_exists = self.session.scalar(
+            select(exists().where(Restaurant.id == restaurant_id))
+        )
+
+        if not restaurant_exists:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail='Restaurant not found'
+            )
+
+        stmt = select(Product).where(
+            Product.restaurant_id == restaurant_id
+        )
+
+        if name:
+            stmt = stmt.where(
+                Product.name.ilike(f'%{name}%'),
+            )
+
+        stmt = stmt.limit(limit).offset(offset)
+        return self.session.scalars(stmt).all()
 
 
 def get_product_service(session: SESSION) -> ProductService:
