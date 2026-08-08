@@ -4,44 +4,48 @@
 
 ```mermaid
 erDiagram
-  CLIENT ||--o{ ORDER : "cria"
+  CUSTOMER ||--o{ ORDER : "cria"
   RESTAURANT ||--o{ ORDER : "recebe"
+  RESTAURANT ||--o{ PRODUCT : "possui"
+  PRODUCT ||--o{ ORDER : "está em"
   ORDER ||--o| REVIEW : "possui"
 
-  CLIENT {
+  CUSTOMER {
     string id PK "UUID"
     string name
     string email
-    string password_hash
-    datetime created_at
   }
 
   RESTAURANT {
     string id PK "UUID"
     string name
     string email
-    string password_hash
-    datetime created_at
+  }
+
+  PRODUCT {
+    string id PK "UUID"
+    string restaurant_id FK
+    string name
+    decimal price
   }
 
   ORDER {
     string id PK "UUID"
-    string client_id FK
+    string customer_id FK
     string restaurant_id FK
+    string product_id FK
+    int quantity "Quantidade do produto"
     string status "CREATED | ACCEPTED | REJECTED | DELIVERED | REVIEWED"
-    string items_description "Ex: 1x X-Salada, 1x Coca 2L"
-    decimal total_value
+    decimal total_value "Calculado: price * quantity"
     datetime created_at
-    datetime updated_at
   }
 
   REVIEW {
     string id PK "UUID"
-    string order_id FK "UQ - 1 review por pedido"
-    string client_id FK
-    int rating "Nota de 1 a 5"
-    string comment "Opcional"
-    datetime created_at
+    string order_id FK "UQ"
+    string customer_id FK
+    int rating
+    string comment
   }
 ```
 

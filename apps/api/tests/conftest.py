@@ -9,6 +9,7 @@ from vfdelivery.core.password import SecurePassword
 from vfdelivery.core.token import generate_access_token
 from vfdelivery.main import app
 from vfdelivery.models.customer import Customer
+from vfdelivery.models.product import Product
 from vfdelivery.models.restaurant import Restaurant
 from vfdelivery.schemas.public_schemas import AuthToken
 
@@ -76,3 +77,19 @@ def customer_token(customer) -> AuthToken:
     access_token = generate_access_token(data)
 
     return AuthToken(access_token=access_token)
+
+
+@pytest.fixture
+def product(session, restaurant) -> Product:
+    product = Product(
+        restaurant_id=restaurant.id,
+        name='X-Burguer',
+        description='Test description',
+        price=14.00
+    )
+
+    session.add(product)
+    session.commit()
+    session.refresh(product)
+
+    return product
