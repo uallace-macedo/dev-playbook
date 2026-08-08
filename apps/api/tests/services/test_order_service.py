@@ -1,10 +1,13 @@
+import uuid
+from http import HTTPStatus
+
+import pytest
+from fastapi import HTTPException
+
 from vfdelivery.models.order import Order, OrderStatus
 from vfdelivery.schemas.order_schemas import OrderCreate
 from vfdelivery.services.order_service import get_order_service
-import uuid
-import pytest
-from fastapi import HTTPException
-from http import HTTPStatus
+
 
 def test_create_order(session, customer, restaurant, product):
     service = get_order_service(session)
