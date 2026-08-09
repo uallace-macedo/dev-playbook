@@ -1,13 +1,18 @@
 from datetime import datetime, timedelta
 from http import HTTPStatus
+from typing import Annotated
 from zoneinfo import ZoneInfo
 
-from fastapi import HTTPException
+from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
 from jwt import PyJWTError, decode, encode
 
 from vfdelivery.core.settings import settings
 from vfdelivery.models.user import UserRole
 from vfdelivery.schemas.auth import AuthToken, JWTClaims
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/v1/auth/login')
+Token = Annotated[str, Depends(oauth2_scheme)]
 
 
 def create_access_token(data: JWTClaims) -> AuthToken:
@@ -30,7 +35,7 @@ def create_access_token(data: JWTClaims) -> AuthToken:
     )
 
 
-def get_current_user(token: str) -> JWTClaims:
+def get_current_user(token: Token) -> JWTClaims:
     """Get authenticated user's data (`email` and `role`) from Bearer token"""
     credentials_exception = HTTPException(
         status_code=HTTPStatus.UNAUTHORIZED,

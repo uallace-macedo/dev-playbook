@@ -1,4 +1,3 @@
-
 from jwt import decode
 
 from vfdelivery.core.settings import settings

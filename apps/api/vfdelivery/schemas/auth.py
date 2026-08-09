@@ -1,3 +1,4 @@
+
 from pydantic import BaseModel, EmailStr, Field
 
 from vfdelivery.models.user import UserRole

@@ -27,3 +27,6 @@ class RoleChecker:
             )
 
         return current_user
+
+
+RequireRestaurantOwner = Annotated[JWTClaims, Depends(RoleChecker([UserRole.RESTAURANT_OWNER]))]
