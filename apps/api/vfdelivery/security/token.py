@@ -7,7 +7,7 @@ from jwt import PyJWTError, decode, encode
 
 from vfdelivery.core.settings import settings
 from vfdelivery.models.user import UserRole
-from vfdelivery.shared.schemas import AuthToken, JWTClaims
+from vfdelivery.schemas.auth import AuthToken, JWTClaims
 
 
 def create_access_token(data: JWTClaims) -> AuthToken:
@@ -30,7 +30,8 @@ def create_access_token(data: JWTClaims) -> AuthToken:
     )
 
 
-def get_data_from_token(token: str) -> JWTClaims:
+def get_current_user(token: str) -> JWTClaims:
+    """Get authenticated user's data (`email` and `role`) from Bearer token"""
     credentials_exception = HTTPException(
         status_code=HTTPStatus.UNAUTHORIZED,
         detail='Could not validate token'

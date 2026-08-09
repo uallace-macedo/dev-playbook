@@ -3,8 +3,8 @@ from jwt import decode
 
 from vfdelivery.core.settings import settings
 from vfdelivery.models.user import UserRole
-from vfdelivery.security.token import create_access_token, get_data_from_token
-from vfdelivery.shared.schemas import JWTClaims
+from vfdelivery.schemas.auth import JWTClaims
+from vfdelivery.security.token import create_access_token, get_current_user
 
 
 def test_create_access_token():
@@ -34,6 +34,6 @@ def test_get_data_from_token():
     )
     access_token = create_access_token(payload).access_token
 
-    result = get_data_from_token(access_token)
+    result = get_current_user(access_token)
     assert result.sub == payload.sub
     assert result.role == payload.role
