@@ -1,0 +1,38 @@
+[project]
+name = "vfdelivery"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi[standard]>=0.141.1",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=9.1.1",
+  "pytest-cov>=7.1.0",
+  "ruff>=0.16.1",
+  "taskipy>=1.14.1",
+]
+
+[tool.ruff]
+line-length = 88
+indent-width = 4
+extend-exclude = ['migrations']
+
+[tool.ruff.format]
+quote-style = 'single'
+indent-style = 'space'
+
+[tool.ruff.lint]
+preview = true
+select = ['I', 'F', 'E', 'W', 'PL', 'PT', 'FAST']
+
+[tool.pytest.ini_options]
+pythonpath = '.'
+addopts = '-p no:warnings'
+
+[tool.taskipy.tasks]
+lint = 'ruff check --fix'
+test = 'pytest --cov=vfdelivery -vv'
+post_test = 'coverage html'
+run = 'fastapi dev vfdelivery/main.py'
