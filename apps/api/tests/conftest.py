@@ -46,7 +46,7 @@ def session():
 def user(session: Session) -> User:
     user = User(
         name='test',
-        email='test@email.com',
+        email='customer@email.com',
         role=UserRole.CUSTOMER,
         password=create_hash('secret')
     )
@@ -62,7 +62,7 @@ def user(session: Session) -> User:
 def user_restaurant(session: Session) -> User:
     user = User(
         name='test',
-        email='test@email.com',
+        email='owner@email.com',
         role=UserRole.RESTAURANT_OWNER,
         password=create_hash('secret')
     )
@@ -77,7 +77,7 @@ def user_restaurant(session: Session) -> User:
 @pytest.fixture
 def token_customer(user) -> AuthToken:
     payload = JWTClaims(
-        sub=user.email,
+        sub=user.id,
         role=user.role
     )
 
@@ -87,7 +87,7 @@ def token_customer(user) -> AuthToken:
 @pytest.fixture
 def token_restaurant(user_restaurant) -> AuthToken:
     payload = JWTClaims(
-        sub=user_restaurant.email,
+        sub=user_restaurant.id,
         role=user_restaurant.role
     )
 
@@ -99,6 +99,21 @@ def restaurant(session: Session, user: User) -> Restaurant:
     restaurant = Restaurant(
         owner_id=user.id,
         name='Test Restaurant',
+        description='Test Description'
+    )
+
+    session.add(restaurant)
+    session.commit()
+    session.refresh(restaurant)
+
+    return restaurant
+
+
+@pytest.fixture
+def restaurant_owned(session: Session, user_restaurant: User) -> Restaurant:
+    restaurant = Restaurant(
+        owner_id=user_restaurant.id,
+        name='Test Restaurant Owned',
         description='Test Description'
     )
 

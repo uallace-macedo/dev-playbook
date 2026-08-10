@@ -14,9 +14,9 @@ class RestaurantService:
     def __init__(self, session: SessionDummy) -> None:
         self.session = session
 
-    def create(self, owner_email: str, data: RestaurantCreate) -> Restaurant:
+    def create(self, owner_id: str, data: RestaurantCreate) -> Restaurant:
         user = self.session.scalar(
-            select(User).where(User.email == owner_email)
+            select(User).where(User.id == owner_id)
         )
 
         if not user:

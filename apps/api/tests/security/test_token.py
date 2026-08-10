@@ -1,3 +1,5 @@
+import uuid
+
 from jwt import decode
 
 from vfdelivery.core.settings import settings
@@ -8,7 +10,7 @@ from vfdelivery.security.token import create_access_token, get_current_user
 
 def test_create_access_token():
     payload = JWTClaims(
-        sub='test@email.com',
+        sub=uuid.uuid4(),
         role=UserRole.CUSTOMER
     )
 
@@ -28,7 +30,7 @@ def test_create_access_token():
 
 def test_get_data_from_token():
     payload = JWTClaims(
-        sub='test@email.com',
+        sub=uuid.uuid4(),
         role=UserRole.RESTAURANT_OWNER
     )
     access_token = create_access_token(payload).access_token

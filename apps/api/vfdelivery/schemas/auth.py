@@ -1,3 +1,4 @@
+from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, Field
 
@@ -24,5 +25,5 @@ class AuthToken(BaseModel):
 
 
 class JWTClaims(BaseModel):
-    sub: EmailStr
+    sub: UUID
     role: UserRole

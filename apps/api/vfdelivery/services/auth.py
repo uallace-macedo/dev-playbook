@@ -64,7 +64,7 @@ class AuthService:
         if not verify(password, user.password):
             raise invalid_credentials
 
-        payload = JWTClaims(sub=user.email, role=user.role)
+        payload = JWTClaims(sub=user.id, role=user.role)
         access_token = create_access_token(payload).access_token
 
         return AuthToken(access_token=access_token)

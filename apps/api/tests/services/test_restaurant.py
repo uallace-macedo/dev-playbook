@@ -16,7 +16,7 @@ def test_create(session, user):
         description='Description'
     )
 
-    result = service.create(user.email, data)
+    result = service.create(user.id, data)
 
     assert isinstance(result, Restaurant)
     assert result.id is not None

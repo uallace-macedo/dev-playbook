@@ -6,9 +6,9 @@ from zoneinfo import ZoneInfo
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jwt import PyJWTError, decode, encode
+from pydantic import ValidationError
 
 from vfdelivery.core.settings import settings
-from vfdelivery.models.user import UserRole
 from vfdelivery.schemas.auth import AuthToken, JWTClaims
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/v1/auth/login')
@@ -16,7 +16,7 @@ Token = Annotated[str, Depends(oauth2_scheme)]
 
 
 def create_access_token(data: JWTClaims) -> AuthToken:
-    payload = data.model_dump()
+    payload = data.model_dump(mode='json')
 
     exp = datetime.now(tz=ZoneInfo('UTC')) + timedelta(
         minutes=settings.TOKEN_EXPIRES_MINUTES
@@ -49,16 +49,7 @@ def get_current_user(token: Token) -> JWTClaims:
             algorithms=[settings.JWT_ALGORITHM]
         )
 
-        email: str | None = payload.get('sub')
-        role: UserRole | None = payload.get('role')
+        return JWTClaims(**payload)
 
-        if not email or not role:
-            raise credentials_exception
-
-        return JWTClaims(
-            sub=email,
-            role=role
-        )
-
-    except PyJWTError:
+    except (ValidationError, PyJWTError):
         raise credentials_exception
