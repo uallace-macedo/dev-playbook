@@ -4,7 +4,12 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 
 from vfdelivery.core.dependencies import RequireRestaurantOwner
-from vfdelivery.schemas.restaurant import RestaurantCreate, RestaurantPublic, RestaurantList, RestaurantFetch
+from vfdelivery.schemas.restaurant import (
+    RestaurantCreate,
+    RestaurantFetch,
+    RestaurantList,
+    RestaurantPublic,
+)
 from vfdelivery.services.restaurant import RestaurantService, get_restaurant_service
 
 router = APIRouter(prefix='/restaurants', tags=['Restaurants'])

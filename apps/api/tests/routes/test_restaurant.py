@@ -66,4 +66,3 @@ def test_get_restaurants_returns_empty_when_not_found(client):
     assert response.status_code == HTTPStatus.OK
     data = response.json()
     assert data['restaurants'] == []
-
