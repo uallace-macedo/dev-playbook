@@ -1,0 +1,13 @@
+services:
+  vfdelivery_db:
+    image: postgres:16-alpine
+    container_name: vfdelivery_db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-vfdelivery}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vfdelivery}
+      POSTGRES_DB: ${POSTGRES_DB:-vfdelivery_db}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+  
