@@ -27,8 +27,11 @@ def test_create_order_success(session, user, restaurant_owned, product):
     assert result.total_price == expected_total
     assert result.status == OrderStatus.CREATED
     assert len(result.items) == 1
-    assert result.items[0].product_id == product.id
-    assert result.items[0].quantity == quantity
+
+    assert result.customer.id == user.id
+    assert result.restaurant.id == restaurant_owned.id
+    assert result.items[0].product.id == product.id
+    assert result.items[0].product_name == product.name
 
 
 def test_create_order_fails_product_not_found(session, user, restaurant_owned):
@@ -64,7 +67,7 @@ def test_get_orders_by_restaurant_id_with_status_filter(
 ):
     service = get_order_service(session)
     service.update_status(
-        restaurant_owned.id,
+        user_restaurant.id,
         order.id,
         OrderPatchStatus(status=OrderStatus.ACCEPTED),
     )
@@ -93,12 +96,12 @@ def test_get_orders_by_restaurant_id_fails_restaurant_not_found(
     assert exc_info.value.detail == 'Restaurant not found'
 
 
-def test_update_status_success(session, restaurant_owned, order):
+def test_update_status_success(session, user_restaurant, restaurant_owned, order):
     service = get_order_service(session)
     patch_data = OrderPatchStatus(status=OrderStatus.ACCEPTED)
 
     updated_order = service.update_status(
-        restaurant_id=restaurant_owned.id,
+        owner_id=user_restaurant.id,
         order_id=order.id,
         data=patch_data,
     )
@@ -107,13 +110,13 @@ def test_update_status_success(session, restaurant_owned, order):
     assert updated_order.status == OrderStatus.ACCEPTED
 
 
-def test_update_status_fails_order_not_found(session, restaurant_owned):
+def test_update_status_fails_order_not_found(session, user_restaurant):
     service = get_order_service(session)
     patch_data = OrderPatchStatus(status=OrderStatus.DELIVERED)
 
     with pytest.raises(HTTPException) as exc_info:
         service.update_status(
-            restaurant_id=restaurant_owned.id,
+            owner_id=user_restaurant.id,
             order_id=uuid.uuid4(),
             data=patch_data,
         )

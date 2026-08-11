@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
 
@@ -43,3 +44,16 @@ def get_restaurants(
     """Get restaurants"""
     result = service.get_restaurants(queries)
     return RestaurantList(restaurants=result)
+
+
+@router.get(
+    '/{restaurant_id}',
+    status_code=HTTPStatus.OK,
+    response_model=RestaurantPublic
+)
+def get_restaurant_by_id(
+    restaurant_id: UUID,
+    service: restaurant_service
+):
+    """Get a restaurant"""
+    return service.get_restaurant_by_id(restaurant_id)

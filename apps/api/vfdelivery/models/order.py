@@ -1,12 +1,17 @@
 import uuid
 from datetime import datetime
 from enum import Enum
+from typing import TYPE_CHECKING, List
 
-from sqlalchemy import func
+from sqlalchemy import ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from vfdelivery.core.database import table_registry
-from vfdelivery.models.order_item import OrderItem
+
+if TYPE_CHECKING:
+    from vfdelivery.models.order_item import OrderItem
+    from vfdelivery.models.restaurant import Restaurant
+    from vfdelivery.models.user import User
 
 
 class OrderStatus(str, Enum):
@@ -27,10 +32,12 @@ class Order:
     )
 
     customer_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey('tb_users.id'),
         nullable=False
     )
 
     restaurant_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey('tb_restaurants.id'),
         nullable=False
     )
 
@@ -54,7 +61,6 @@ class Order:
         onupdate=func.now()
     )
 
-    items: Mapped[list[OrderItem]] = relationship(
-        init=False,
-        lazy='joined'
-    )
+    customer: Mapped['User'] = relationship(init=False)
+    restaurant: Mapped['Restaurant'] = relationship(init=False)
+    items: Mapped[List['OrderItem']] = relationship(init=False)

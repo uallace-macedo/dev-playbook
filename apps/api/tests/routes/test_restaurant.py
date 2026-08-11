@@ -1,3 +1,4 @@
+import uuid
 from http import HTTPStatus
 
 BASE_URL = '/api/v1/restaurants'
@@ -41,28 +42,20 @@ def test_get_restaurants_success(client, restaurant):
     assert len(data['restaurants']) >= 1
 
 
-def test_get_restaurants_with_query_params(client, restaurant):
-    response = client.get(
-        BASE_URL,
-        params={
-            'limit': 5,
-            'offset': 0,
-            'name': restaurant.name,
-        },
-    )
+def test_get_restaurant_by_id_success(client, restaurant):
+    response = client.get(f'{BASE_URL}/{restaurant.id}')
 
     assert response.status_code == HTTPStatus.OK
     data = response.json()
-    assert len(data['restaurants']) == 1
-    assert data['restaurants'][0]['name'] == restaurant.name
+    assert data['id'] == str(restaurant.id)
+    assert data['name'] == restaurant.name
+    assert 'rating_average' in data
+    assert 'total_reviews' in data
 
 
-def test_get_restaurants_returns_empty_when_not_found(client):
-    response = client.get(
-        BASE_URL,
-        params={'name': 'no-restaurant'},
-    )
+def test_get_restaurant_by_id_not_found(client):
+    random_id = uuid.uuid4()
+    response = client.get(f'{BASE_URL}/{random_id}')
 
-    assert response.status_code == HTTPStatus.OK
-    data = response.json()
-    assert data['restaurants'] == []
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json()['detail'] == 'Restaurant not found'

@@ -15,6 +15,10 @@ class RestaurantCreate(RestaurantBase):
 
 class RestaurantPublic(RestaurantBase):
     id: UUID
+    name: str
+    description: Optional[str] = None
+    rating_average: Optional[float] = Field(default=0)
+    total_reviews: Optional[int] = Field(default=0)
 
     model_config = ConfigDict(
         from_attributes=True

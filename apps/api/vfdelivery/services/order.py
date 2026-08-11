@@ -3,7 +3,7 @@ from uuid import UUID
 
 from fastapi import HTTPException
 from sqlalchemy import exists, select
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import joinedload, selectinload
 
 from vfdelivery.core.dependencies import SessionDummy
 from vfdelivery.models.order import Order, OrderStatus
@@ -16,6 +16,26 @@ from vfdelivery.schemas.order import OrderCreate, OrderFetch, OrderPatchStatus
 class OrderService:
     def __init__(self, session: SessionDummy) -> None:
         self.session = session
+
+    def get_order_by_id(self, order_id: UUID) -> Order:
+        stmt = (
+            select(Order)
+            .where(Order.id == order_id)
+            .options(
+                joinedload(Order.customer),
+                joinedload(Order.restaurant),
+                selectinload(Order.items).joinedload(OrderItem.product)
+            )
+        )
+
+        order = self.session.scalar(stmt)
+        if not order:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail='Order not found'
+            )
+
+        return order
 
     def _get_products_map(self, product_ids: list[UUID]) -> dict[UUID, Product]:
         """Get products from db and returns a dict {product_id: Product}."""
@@ -66,9 +86,8 @@ class OrderService:
 
         self.session.add(order)
         self.session.commit()
-        self.session.refresh(order)
 
-        return order
+        return self.get_order_by_id(order.id)
 
     def get_orders_by_restaurant_id(
         self,
@@ -95,7 +114,9 @@ class OrderService:
             select(Order)
             .where(Order.restaurant_id == restaurant_id)
             .options(
-                selectinload(Order.items).selectinload(OrderItem.product)
+                joinedload(Order.customer),
+                joinedload(Order.restaurant),
+                selectinload(Order.items).joinedload(OrderItem.product)
             )
         )
 
@@ -111,31 +132,71 @@ class OrderService:
         orders = self.session.scalars(stmt).unique().all()
         return list(orders)
 
-    def update_status(
-        self,
-        restaurant_id: UUID,
-        order_id: UUID,
-        data: OrderPatchStatus
-    ) -> Order:
-        order = self.session.scalar(
-            select(Order).where(
-                Order.id == order_id,
-                Order.restaurant_id == restaurant_id
+    def get_orders_by_customer_id(
+        self, customer_id: UUID, options: OrderFetch
+    ) -> list[Order]:
+        stmt = (
+            select(Order)
+            .where(Order.customer_id == customer_id)
+            .options(
+                joinedload(Order.customer),
+                joinedload(Order.restaurant),
+                selectinload(Order.items).joinedload(OrderItem.product),
             )
         )
+
+        if options.status:
+            stmt = stmt.where(Order.status == options.status)
+
+        stmt = (
+            stmt.order_by(Order.created_at.desc())
+            .limit(options.limit)
+            .offset(options.offset)
+        )
+
+        orders = self.session.scalars(stmt).unique().all()
+        return list(orders)
+
+    def get_order_by_id_for_user(
+        self, order_id: UUID, user_id: UUID
+    ) -> Order:
+        order = self.get_order_by_id(order_id)
+
+        is_customer = order.customer_id == user_id
+        is_owner = order.restaurant.owner_id == user_id
+
+        if not (is_customer or is_owner):
+            raise HTTPException(
+                status_code=HTTPStatus.FORBIDDEN,
+                detail='Access denied',
+            )
+
+        return order
+
+    def update_status(
+        self, owner_id: UUID, order_id: UUID, data: OrderPatchStatus
+    ) -> Order:
+        stmt = (
+            select(Order)
+            .join(Restaurant, Order.restaurant_id == Restaurant.id)
+            .where(
+                Order.id == order_id,
+                Restaurant.owner_id == owner_id,
+            )
+        )
+
+        order = self.session.scalar(stmt)
 
         if not order:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail='Order not found'
+                detail='Order not found',
             )
 
         order.status = data.status
 
         self.session.commit()
-        self.session.refresh(order)
-
-        return order
+        return self.get_order_by_id(order.id)
 
 
 def get_order_service(session: SessionDummy) -> OrderService:
