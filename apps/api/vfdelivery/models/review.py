@@ -1,11 +1,15 @@
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from vfdelivery.core.database import table_registry
-from vfdelivery.models.user import User
+
+if TYPE_CHECKING:
+    from vfdelivery.models.restaurant import Restaurant
+    from vfdelivery.models.user import User
 
 
 @table_registry.mapped_as_dataclass
@@ -19,12 +23,17 @@ class Review:
     )
 
     order_id: Mapped[uuid.UUID] = mapped_column(
-        nullable=False,
+        ForeignKey('tb_orders.id'),
         unique=True
     )
 
     customer_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey('tb_users.id'),
+        nullable=False
+    )
+
+    restaurant_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey('tb_restaurants.id'),
         nullable=False
     )
 
@@ -44,4 +53,9 @@ class Review:
 
     customer: Mapped['User'] = relationship(
         init=False
+    )
+
+    restaurant: Mapped['Restaurant'] = relationship(
+        init=False,
+        back_populates='reviews'
     )
