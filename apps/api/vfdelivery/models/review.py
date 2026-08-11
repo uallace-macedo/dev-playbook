@@ -1,10 +1,11 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import ForeignKey, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from vfdelivery.core.database import table_registry
+from vfdelivery.models.user import User
 
 
 @table_registry.mapped_as_dataclass
@@ -23,6 +24,7 @@ class Review:
     )
 
     customer_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey('tb_users.id'),
         nullable=False
     )
 
@@ -30,11 +32,16 @@ class Review:
         nullable=False
     )
 
-    comment: Mapped[float] = mapped_column(
-        nullable=True
+    comment: Mapped[str | None] = mapped_column(
+        nullable=True,
+        default=None
     )
 
     created_at: Mapped[datetime] = mapped_column(
         init=False,
         server_default=func.now()
+    )
+
+    customer: Mapped['User'] = relationship(
+        init=False
     )
