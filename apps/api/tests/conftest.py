@@ -11,6 +11,7 @@ from vfdelivery.models.order import Order, OrderStatus
 from vfdelivery.models.order_item import OrderItem
 from vfdelivery.models.product import Product
 from vfdelivery.models.restaurant import Restaurant
+from vfdelivery.models.review import Review
 from vfdelivery.models.user import User, UserRole
 from vfdelivery.schemas.auth import AuthToken, JWTClaims
 from vfdelivery.security.password import create_hash
@@ -168,3 +169,23 @@ def order(
     session.commit()
     session.refresh(order)
     return order
+
+
+@pytest.fixture
+def review(session: Session, user: User, order: Order) -> Review:
+    order.status = OrderStatus.DELIVERED
+    session.commit()
+
+    review = Review(
+        order_id=order.id,
+        customer_id=user.id,
+        restaurant_id=order.restaurant_id,
+        rating=5,
+        comment='Awesome food!'
+    )
+
+    session.add(review)
+    session.commit()
+    session.refresh(review)
+
+    return review
