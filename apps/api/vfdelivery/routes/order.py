@@ -62,21 +62,55 @@ def get_orders_by_restaurant(
     return OrderList(orders=orders)
 
 
+@router.get(
+    '/orders/me',
+    status_code=HTTPStatus.OK,
+    response_model=OrderList,
+)
+def get_my_orders(
+    queries: order_fetch_data,
+    current_user: CurrentUser,
+    service: order_service,
+):
+    """List all orders for the current logged-in customer"""
+    orders = service.get_orders_by_customer_id(
+        customer_id=current_user.sub,
+        options=queries,
+    )
+    return OrderList(orders=orders)
+
+
+@router.get(
+    '/orders/{order_id}',
+    status_code=HTTPStatus.OK,
+    response_model=OrderPublic,
+)
+def get_order_by_id(
+    order_id: UUID,
+    current_user: CurrentUser,
+    service: order_service,
+):
+    """Get order details (Accessible by Customer or Restaurant Owner)"""
+    return service.get_order_by_id_for_user(
+        order_id=order_id,
+        user_id=current_user.sub,
+    )
+
+
 @router.patch(
-    '/restaurants/{restaurant_id}/orders/{order_id}/status',
+    '/orders/{order_id}/status',
     status_code=HTTPStatus.OK,
     response_model=OrderPublic,
 )
 def update_status(
-    restaurant_id: UUID,
     order_id: UUID,
     data: OrderPatchStatus,
-    _: RequireRestaurantOwner,
+    current_user: RequireRestaurantOwner,
     service: order_service,
 ):
     """Update order status (Requires Restaurant Owner Authentication)"""
     return service.update_status(
-        restaurant_id=restaurant_id,
+        owner_id=current_user.sub,
         order_id=order_id,
         data=data,
     )
