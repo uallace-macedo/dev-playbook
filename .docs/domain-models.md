@@ -38,7 +38,7 @@ erDiagram
     UUID id PK
     UUID customer_id FK
     UUID restaurant_id FK
-    string status "PENDING | PREPARING | DELIVERED | CANCELED"
+    string status "CREATED | ACCEPTED | REJECTED | DELIVERED"
     decimal total_price
   }
 

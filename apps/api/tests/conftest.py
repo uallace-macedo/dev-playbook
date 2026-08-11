@@ -7,6 +7,9 @@ from sqlalchemy.pool import StaticPool
 from vfdelivery.core.database import table_registry
 from vfdelivery.core.dependencies import get_session
 from vfdelivery.main import app
+from vfdelivery.models.order import Order, OrderStatus
+from vfdelivery.models.order_item import OrderItem
+from vfdelivery.models.product import Product
 from vfdelivery.models.restaurant import Restaurant
 from vfdelivery.models.user import User, UserRole
 from vfdelivery.schemas.auth import AuthToken, JWTClaims
@@ -122,3 +125,46 @@ def restaurant_owned(session: Session, user_restaurant: User) -> Restaurant:
     session.refresh(restaurant)
 
     return restaurant
+
+
+@pytest.fixture
+def product(
+    session: Session,
+    restaurant_owned: Restaurant,
+) -> Product:
+    product = Product(
+        restaurant_id=restaurant_owned.id,
+        name='Test Product',
+        price=20.00,
+    )
+    session.add(product)
+    session.commit()
+    session.refresh(product)
+    return product
+
+
+@pytest.fixture
+def order(
+    session: Session,
+    user: User,
+    restaurant_owned: Restaurant,
+    product: Product,
+) -> Order:
+    order = Order(
+        customer_id=user.id,
+        restaurant_id=restaurant_owned.id,
+        status=OrderStatus.CREATED,
+        total_price=product.price,
+    )
+    order_item = OrderItem(
+        order_id=None,
+        product_id=product.id,
+        quantity=1,
+        unit_price=product.price,
+    )
+    order.items = [order_item]
+
+    session.add(order)
+    session.commit()
+    session.refresh(order)
+    return order

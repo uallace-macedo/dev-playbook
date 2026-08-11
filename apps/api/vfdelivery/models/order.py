@@ -3,9 +3,10 @@ from datetime import datetime
 from enum import Enum
 
 from sqlalchemy import func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from vfdelivery.core.database import table_registry
+from vfdelivery.models.order_item import OrderItem
 
 
 class OrderStatus(str, Enum):
@@ -51,4 +52,9 @@ class Order:
         init=False,
         server_default=func.now(),
         onupdate=func.now()
+    )
+
+    items: Mapped[list[OrderItem]] = relationship(
+        init=False,
+        lazy='joined'
     )

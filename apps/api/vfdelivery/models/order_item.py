@@ -1,10 +1,11 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import ForeignKey, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from vfdelivery.core.database import table_registry
+from vfdelivery.models.product import Product
 
 
 @table_registry.mapped_as_dataclass
@@ -18,10 +19,12 @@ class OrderItem:
     )
 
     order_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey('tb_orders.id'),
         nullable=False
     )
 
     product_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey('tb_products.id'),
         nullable=False
     )
 
@@ -37,3 +40,15 @@ class OrderItem:
         init=False,
         server_default=func.now()
     )
+
+    product: Mapped['Product'] = relationship(
+        init=False
+    )
+
+    @property
+    def subtotal(self) -> float:
+        return self.quantity * self.unit_price
+
+    @property
+    def product_name(self) -> str:
+        return self.product.name if self.product else ''
