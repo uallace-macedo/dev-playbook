@@ -1,13 +1,17 @@
 from http import HTTPStatus
-from typing import Sequence
+from uuid import UUID
 
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from vfdelivery.core.dependencies import SessionDummy
 from vfdelivery.models.restaurant import Restaurant
+from vfdelivery.models.review import Review
 from vfdelivery.models.user import User
-from vfdelivery.schemas.restaurant import RestaurantCreate, RestaurantFetch
+from vfdelivery.schemas.restaurant import (
+    RestaurantCreate,
+    RestaurantFetch,
+)
 
 
 class RestaurantService:
@@ -37,21 +41,47 @@ class RestaurantService:
 
         return restaurant
 
-    def get_restaurants(self, fetch_data: RestaurantFetch) -> Sequence[Restaurant]:
-        stmt = select(Restaurant)
+    def get_restaurants(self, options: RestaurantFetch):
+        stmt = (
+            select(
+                Restaurant.id,
+                Restaurant.name,
+                Restaurant.description,
 
-        if fetch_data.name:
-            stmt = stmt.where(Restaurant.name.ilike(f'%{fetch_data.name}%'))
-
-        stmt = stmt.limit(
-            fetch_data.limit
-        ).offset(
-            fetch_data.offset
-        ).order_by(
-            Restaurant.name.asc()
+                func.coalesce(func.avg(Review.rating), 0.0).label('rating_average'),
+                func.count(Review.id).label('total_reviews')
+            )
+            .outerjoin(Review, Restaurant.id == Review.restaurant_id)
+            .group_by(Restaurant.id)
+            .limit(options.limit)
+            .offset(options.offset)
         )
 
-        return self.session.scalars(stmt).all()
+        return self.session.execute(stmt).mappings().all()
+
+    def get_restaurant_by_id(self, restaurant_id: UUID):
+        stmt = (
+            select(
+                Restaurant.id,
+                Restaurant.name,
+                Restaurant.description,
+
+                func.coalesce(func.avg(Review.rating), 0.0).label('rating_average'),
+                func.count(Review.id).label('total_reviews'),
+            )
+            .outerjoin(Review, Restaurant.id == Review.restaurant_id)
+            .group_by(Restaurant.id)
+            .where(Restaurant.id == restaurant_id)
+        )
+
+        result = self.session.execute(stmt).mappings().first()
+        if not result:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail='Restaurant not found'
+            )
+
+        return result
 
 
 def get_restaurant_service(session: SessionDummy) -> RestaurantService:
