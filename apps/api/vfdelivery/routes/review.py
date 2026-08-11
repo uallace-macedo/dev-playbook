@@ -21,7 +21,7 @@ review_fetch_data = Annotated[ReviewFetch, Query()]
 
 
 @router.post(
-    '/orders/{order_id}/review',
+    '/orders/{order_id}/reviews',  # Atualizado para o plural /reviews
     status_code=HTTPStatus.CREATED,
     response_model=ReviewPublic,
 )
@@ -31,9 +31,12 @@ def create_review(
     current_user: CurrentUser,
     service: review_service,
 ):
-    """Creates a review for a delivered order"""
-    data.order_id = order_id
-    return service.create(current_user.sub, data)
+    """Creates a review for a delivered order (Customer Only)"""
+    return service.create(
+        customer_id=current_user.sub,
+        order_id=order_id,
+        data=data,
+    )
 
 
 @router.get(
@@ -44,8 +47,7 @@ def create_review(
 def get_reviews_by_restaurant(
     restaurant_id: UUID,
     queries: review_fetch_data,
-    current_user: CurrentUser,
-    service: review_service,
+    service: review_service,  # Removido 'current_user' para permitir acesso público
 ):
-    """Get reviews by restaurant ID"""
+    """Get reviews by restaurant ID (Public Endpoint)"""
     return service.get_reviews_by_restaurant_id(restaurant_id, queries)

@@ -17,7 +17,6 @@ class OrderService:
     def __init__(self, session: SessionDummy) -> None:
         self.session = session
 
-    # n entendi
     def get_order_by_id(self, order_id: UUID) -> Order:
         stmt = (
             select(Order)

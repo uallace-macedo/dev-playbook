@@ -16,12 +16,11 @@ def test_create_review_success(session, order):
 
     service = get_review_service(session)
     data = ReviewCreate(
-        order_id=order.id,
         rating=5,
-        comment='Awesome food!'
+        comment='Awesome food!',
     )
 
-    result = service.create(order.customer_id, data)
+    result = service.create(order.customer_id, order.id, data)
 
     assert isinstance(result, Review)
     assert result.id is not None
@@ -32,13 +31,13 @@ def test_create_review_success(session, order):
 def test_create_review_fails_order_not_found(session, user):
     service = get_review_service(session)
     data = ReviewCreate(
-        order_id=uuid.uuid4(),
         rating=5,
-        comment='Pretty good'
+        comment='Pretty good',
     )
+    random_order_id = uuid.uuid4()
 
     with pytest.raises(HTTPException) as e:
-        service.create(user.id, data)
+        service.create(user.id, random_order_id, data)
 
     assert e.value.status_code == HTTPStatus.NOT_FOUND
     assert e.value.detail == 'Order not found'
@@ -47,13 +46,12 @@ def test_create_review_fails_order_not_found(session, user):
 def test_create_review_fails_order_not_delivered(session, user, order):
     service = get_review_service(session)
     data = ReviewCreate(
-        order_id=order.id,
         rating=4,
-        comment='Fast delivery'
+        comment='Fast delivery',
     )
 
     with pytest.raises(HTTPException) as e:
-        service.create(user.id, data)
+        service.create(user.id, order.id, data)
 
     assert e.value.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
     assert e.value.detail == 'Order is not delivered yet'
@@ -65,15 +63,14 @@ def test_create_review_fails_already_reviewed(session, user, order):
 
     service = get_review_service(session)
     data = ReviewCreate(
-        order_id=order.id,
         rating=5,
-        comment='First review'
+        comment='First review',
     )
 
-    service.create(user.id, data)
+    service.create(user.id, order.id, data)
 
     with pytest.raises(HTTPException) as e:
-        service.create(user.id, data)
+        service.create(user.id, order.id, data)
 
     assert e.value.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
     assert e.value.detail == 'Order already reviewed'
