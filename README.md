@@ -1,7 +1,8 @@
 # 🍔 VFDelivery — Desafio Food Delivery (Vecodes)
 
-> ⚠️ **Status do Projeto:** 🚧 *Em desenvolvimento*.
-> As funcionalidades básicas e a arquitetura estão sendo construídas de acordo com a documentação em `.docs/`.
+> ⚠️ **Status do Projeto:** 
+> - 🟢 **Backend / API:** Concluído e operacional via Docker.
+> - 🚧 **Frontend:** Em andamento.
 
 ---
 
@@ -13,8 +14,9 @@ O **VFDelivery** é uma API REST desenvolvida para gerenciar o fluxo completo de
 
 ## 🛠️ Tech Stack & Arquitetura
 
-- **Linguagem/Framework:** Python + FastAPI
-- **Banco de Dados:** PostgreSQL
+- **Linguagem/Framework:** Python 3.12 + FastAPI
+- **Gerenciador de Pacotes:** `uv`
+- **Banco de Dados:** PostgreSQL 16
 - **ORM & Migrações:** SQLAlchemy + Alembic
 - **Conteinerização:** Docker + Docker Compose
 
@@ -48,18 +50,37 @@ O principal objetivo da aplicação é garantir a seguinte transição obrigató
 
 ---
 
-## 🚀 Como Executar o Projeto
+## 🚀 Como Executar o Backend
 
-*(Instruções em breve...)*
+Certifique-se de ter o **Docker** e o **Docker Compose** instalados na sua máquina.
 
+### 1. Clonar o repositório
 ```bash
-# Clone o repositório
 git clone https://github.com/uallace-macedo/vfdelivery.git
-
-# Suba a aplicação com Docker Compose
-# docker compose up -d --build (Ainda não implementado.)
+cd vfdelivery
 ```
 
-A documentação interativa da API estará disponível em `http://localhost:8000/docs` assim que o ambiente estiver ativo.
+### 2. Configurar variáveis de ambiente
+Crie o arquivo `.env` na pasta da API (`apps/api/.env`):
+```bash
+cp apps/api/.env.example apps/api/.env
+```
+
+### 3. Subir os containers
+Execute o Docker Compose a partir da raiz para compilar o container da API, subir o banco PostgreSQL e aplicar as migrações automaticamente:
+
+```bash
+docker compose up -d --build
+```
+
+> ⏳ A API aguardará automaticamente o container do banco ficar no status `healthy` antes de inicializar e rodar o `alembic upgrade head`.
 
 ---
+
+## 📍 Acessando a API e Documentação
+
+Com os containers em execução, a API estará acessível em:
+
+* 🚀 **Documentação Interativa (Swagger UI):** [http://localhost:8000/docs](http://localhost:8000/docs)
+* 📖 **Documentação Alternativa (ReDoc):** [http://localhost:8000/redoc](http://localhost:8000/redoc)
+* 🗄️ **Banco de Dados (PostgreSQL Externo):** `localhost:6000` (mapeado para a porta interna `5432`)
