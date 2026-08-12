@@ -1,0 +1,42 @@
+services:
+  vfdelivery_db:
+    image: postgres:16-alpine
+    container_name: vfdelivery_db
+    env_file:
+      - ./api/.env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-vfdelivery}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vfdelivery_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-vfdelivery_db}
+    ports:
+      - "${POSTGRES_PORT:-6000}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-vfdelivery} -d ${POSTGRES_DB:-vfdelivery_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  vfdelivery_api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: vfdelivery_api
+    env_file:
+      - ./api/.env
+    environment:
+      POSTGRES_HOST: vfdelivery_db
+      POSTGRES_PORT: 5432
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-vfdelivery}:${POSTGRES_PASSWORD:-vfdelivery_pass}@vfdelivery_db:5432/${POSTGRES_DB:-vfdelivery_db}
+    ports:
+      - "8000:8000"
+    depends_on:
+      vfdelivery_db:
+        condition: service_healthy
+    volumes:
+      - ./api:/app
+      - /app/.venv
+
+volumes:
+  postgres_data:

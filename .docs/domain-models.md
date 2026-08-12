@@ -1,3 +1,5 @@
+# Diagrama Entidade-Relacionamento (ERD)
+
 ```mermaid
 erDiagram
   USERS ||--o{ RESTAURANTS : "possui (como dono)"
@@ -6,6 +8,7 @@ erDiagram
   
   RESTAURANTS ||--o{ PRODUCTS : "tem no cardápio"
   RESTAURANTS ||--o{ ORDERS : "recebe"
+  RESTAURANTS ||--o{ REVIEWS : "recebe"
   
   ORDERS ||--|{ ORDER_ITEMS : "contém"
   PRODUCTS ||--o{ ORDER_ITEMS : "está presente em"
@@ -17,7 +20,8 @@ erDiagram
     string name
     string email
     string password
-    string role "CUSTOMER | RESTAURANT_OWNER"
+    UserRole role "CUSTOMER | RESTAURANT_OWNER"
+    datetime created_at
   }
 
   RESTAURANTS {
@@ -25,21 +29,25 @@ erDiagram
     UUID owner_id FK
     string name
     string description
+    datetime created_at
   }
 
   PRODUCTS {
     UUID id PK
     UUID restaurant_id FK
     string name
-    decimal price
+    float price
+    datetime created_at
   }
 
   ORDERS {
     UUID id PK
     UUID customer_id FK
     UUID restaurant_id FK
-    string status "PENDING | PREPARING | DELIVERED | CANCELED"
-    decimal total_price
+    OrderStatus status "created | accepted | rejected | delivered"
+    float total_price
+    datetime created_at
+    datetime updated_at
   }
 
   ORDER_ITEMS {
@@ -47,14 +55,17 @@ erDiagram
     UUID order_id FK
     UUID product_id FK
     int quantity
-    decimal unit_price
+    float unit_price
+    datetime created_at
   }
 
   REVIEWS {
     UUID id PK
     UUID order_id FK "UNIQUE"
     UUID customer_id FK
+    UUID restaurant_id FK
     int rating "1 a 5"
-    string comment
+    string comment "nullable"
+    datetime created_at
   }
 ```
