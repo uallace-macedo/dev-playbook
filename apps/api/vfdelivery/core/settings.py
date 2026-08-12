@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     POSTGRES_PORT: int = 6000
 
     DATABASE_URL: str = ''
+    WEB_URL: str = ''
 
     @computed_field
     @property
