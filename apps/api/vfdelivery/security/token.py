@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from http import HTTPStatus
-from typing import Annotated
+from typing import Annotated, Optional
 from zoneinfo import ZoneInfo
 
 from fastapi import Depends, HTTPException
@@ -12,7 +12,12 @@ from vfdelivery.core.settings import settings
 from vfdelivery.schemas.auth import AuthToken, JWTClaims
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/v1/auth/login')
+oauth2_scheme_optional = OAuth2PasswordBearer(
+    tokenUrl='/api/v1/auth/login',
+    auto_error=False
+)
 Token = Annotated[str, Depends(oauth2_scheme)]
+OptionalToken = Annotated[Optional[str], Depends(oauth2_scheme_optional)]
 
 
 def create_access_token(data: JWTClaims) -> AuthToken:
@@ -53,3 +58,20 @@ def get_current_user(token: Token) -> JWTClaims:
 
     except (ValidationError, PyJWTError):
         raise credentials_exception
+
+
+def get_optional_current_user(token: OptionalToken) -> Optional[JWTClaims]:
+    """Retrieves authenticated user's data if token is provided, otherwise None"""
+    if not token:
+        return None
+
+    try:
+        payload = decode(
+            token,
+            key=settings.JWT_SECRET_KEY,
+            algorithms=[settings.JWT_ALGORITHM]
+        )
+        return JWTClaims(**payload)
+
+    except (ValidationError, PyJWTError):
+        return None

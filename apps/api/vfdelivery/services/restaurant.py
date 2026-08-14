@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Optional
 from uuid import UUID
 
 from fastapi import HTTPException
@@ -41,7 +42,11 @@ class RestaurantService:
 
         return restaurant
 
-    def get_restaurants(self, options: RestaurantFetch):
+    def get_restaurants(
+        self,
+        options: RestaurantFetch,
+        owner_id: Optional[UUID] = None
+    ):
         stmt = (
             select(
                 Restaurant.id,
@@ -59,6 +64,9 @@ class RestaurantService:
 
         if options.name:
             stmt = stmt.where(Restaurant.name.ilike(f'%{options.name}%'))
+
+        if owner_id:
+            stmt = stmt.where(Restaurant.owner_id == owner_id)
 
         return self.session.execute(stmt).mappings().all()
 

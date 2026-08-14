@@ -21,6 +21,7 @@ class ProductFetch(BaseModel):
 
 class ProductPublic(ProductCreate):
     id: UUID
+    restaurant_id: UUID
 
     model_config = ConfigDict(
         from_attributes=True
@@ -29,3 +30,8 @@ class ProductPublic(ProductCreate):
 
 class ProductList(BaseModel):
     products: list[ProductPublic]
+
+
+class ProductUpdate(BaseModel):
+    name: Optional[str] = Field(default=None, min_length=1)
+    price: Optional[float] = Field(default=None, gt=0)

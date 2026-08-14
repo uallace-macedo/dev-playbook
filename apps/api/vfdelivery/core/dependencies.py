@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Annotated
+from typing import Annotated, Optional
 
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
@@ -8,11 +8,12 @@ from sqlalchemy.orm import Session
 from vfdelivery.core.database import get_session
 from vfdelivery.models.user import UserRole
 from vfdelivery.schemas.auth import JWTClaims
-from vfdelivery.security.token import get_current_user
+from vfdelivery.security.token import get_current_user, get_optional_current_user
 
 SessionDummy = Annotated[Session, Depends(get_session)]
 CurrentUser = Annotated[JWTClaims, Depends(get_current_user)]
 LoginFormData = Annotated[OAuth2PasswordRequestForm, Depends()]
+OptionalCurrentUser = Annotated[Optional[JWTClaims], Depends(get_optional_current_user)]
 
 
 class RoleChecker:
