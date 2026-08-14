@@ -4,8 +4,10 @@ import { RegisterForm } from './features/auth/components/register-form';
 import { ProtectedRoute } from './components/protected-route';
 import { PublicRoute } from './components/public-route';
 import { CustomerHome } from './features/customer/pages/customer-home';
-import { ROUTES } from './config/routes';
 import { RestaurantDetailsPage } from './features/customer/pages/restaurant-details';
+
+import { ROUTES } from './config/routes';
+import { RestaurantHomePage } from './features/restaurant/pages/restaurant-home-page';
 
 export default function App() {
   return (
@@ -29,6 +31,8 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
             <Route path={ROUTES.CUSTOMER.HOME} element={<CustomerHome />} />
             <Route path={ROUTES.CUSTOMER.RESTAURANT} element={<RestaurantDetailsPage />} />
+
+            <Route path={ROUTES.RESTAURANT.HOME} element={<RestaurantHomePage />} />
           </Route>
 
           <Route path="*" element={<Navigate to={ROUTES.AUTH.LOGIN} replace />} />

@@ -1,13 +1,15 @@
 export const ROUTES = {
   AUTH: {
     LOGIN: '/login',
-    REGISTER: '/register'
+    REGISTER: '/register',
   },
   CUSTOMER: {
-    HOME: '/customer',
-    RESTAURANT: '/customer/restaurant/:id'
+    HOME: '/',
+    RESTAURANT: '/customer/restaurant/:id',
   },
   RESTAURANT: {
-    HOME: '/restaurant'
-  }
-}
+    HOME: '/restaurant',
+    PRODUCTS: '/restaurant/:restaurantId/products',
+    ORDERS: '/restaurant/:restaurantId/orders',
+  },
+} as const;
