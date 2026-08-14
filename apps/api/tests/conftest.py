@@ -189,3 +189,33 @@ def review(session: Session, user: User, order: Order) -> Review:
     session.refresh(review)
 
     return review
+
+
+@pytest.fixture
+def product_alt(session: Session, restaurant_owned: Restaurant) -> Product:
+    product = Product(
+        restaurant_id=restaurant_owned.id,
+        name='Secondary Product',
+        price=15.00,
+    )
+    session.add(product)
+    session.commit()
+    session.refresh(product)
+    return product
+
+
+@pytest.fixture
+def other_restaurant_owner(session: Session) -> tuple[User, AuthToken]:
+    user = User(
+        name='Other Owner',
+        email='other_owner@email.com',
+        role=UserRole.RESTAURANT_OWNER,
+        password=create_hash('secret')
+    )
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+
+    payload = JWTClaims(sub=user.id, role=user.role)
+    token = create_access_token(payload)
+    return user, token

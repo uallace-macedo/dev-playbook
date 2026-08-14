@@ -4,7 +4,8 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
 
-from vfdelivery.core.dependencies import RequireRestaurantOwner, OptionalCurrentUser
+from vfdelivery.core.dependencies import OptionalCurrentUser, RequireRestaurantOwner
+from vfdelivery.models.user import UserRole
 from vfdelivery.schemas.restaurant import (
     RestaurantCreate,
     RestaurantFetch,
@@ -43,7 +44,10 @@ def get_restaurants(
     current_user: OptionalCurrentUser = None
 ):
     """Get restaurants"""
-    owner_id = current_user.sub if current_user else None
+    owner_id = None
+    if current_user and current_user.role == UserRole.RESTAURANT_OWNER:
+        owner_id = current_user.sub
+
     result = service.get_restaurants(queries, owner_id)
     return RestaurantList(restaurants=result)
 
