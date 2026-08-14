@@ -9,6 +9,7 @@ import { RestaurantDetailsPage } from './features/customer/pages/restaurant-deta
 import { ROUTES } from './config/routes';
 import { RestaurantHomePage } from './features/restaurant/pages/restaurant-home-page';
 import { RestaurantProductsPage } from './features/restaurant/pages/restaurant-products-page';
+import { RestaurantOrdersPage } from './features/restaurant/pages/restaurant-orders-page';
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
 
             <Route path={ROUTES.RESTAURANT.HOME} element={<RestaurantHomePage />} />
             <Route path={ROUTES.RESTAURANT.PRODUCTS} element={<RestaurantProductsPage />} />
+            <Route path={ROUTES.RESTAURANT.ORDERS} element={<RestaurantOrdersPage />} />
           </Route>
 
           <Route path="*" element={<Navigate to={ROUTES.AUTH.LOGIN} replace />} />
