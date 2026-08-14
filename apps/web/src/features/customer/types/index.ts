@@ -15,3 +15,19 @@ export type GetRestaurantsParams = {
   offset?: number;
   name?: string;
 }
+
+export type Product = {
+  id: string;
+  name: string;
+  price: number;
+};
+
+export type GetProductsParams = {
+  limit?: number;
+  offset?: number;
+  name?: string;
+};
+
+export type GetProductsResponse = {
+  products: Product[];
+};

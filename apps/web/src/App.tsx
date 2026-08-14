@@ -5,6 +5,7 @@ import { ProtectedRoute } from './components/protected-route';
 import { PublicRoute } from './components/public-route';
 import { CustomerHome } from './features/customer/pages/customer-home';
 import { ROUTES } from './config/routes';
+import { RestaurantDetailsPage } from './features/customer/pages/restaurant-details';
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
           
           <Route element={<ProtectedRoute />}>
             <Route path={ROUTES.CUSTOMER.HOME} element={<CustomerHome />} />
+            <Route path={ROUTES.CUSTOMER.RESTAURANT} element={<RestaurantDetailsPage />} />
           </Route>
 
           <Route path="*" element={<Navigate to={ROUTES.AUTH.LOGIN} replace />} />
