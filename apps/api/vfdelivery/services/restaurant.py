@@ -57,6 +57,9 @@ class RestaurantService:
             .offset(options.offset)
         )
 
+        if options.name:
+            stmt = stmt.where(Restaurant.name.ilike(f'%{options.name}%'))
+
         return self.session.execute(stmt).mappings().all()
 
     def get_restaurant_by_id(self, restaurant_id: UUID):

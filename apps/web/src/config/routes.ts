@@ -4,7 +4,8 @@ export const ROUTES = {
     REGISTER: '/register'
   },
   CUSTOMER: {
-    HOME: '/customer'
+    HOME: '/customer',
+    RESTAURANT: '/customer/restaurant/:id'
   },
   RESTAURANT: {
     HOME: '/restaurant'

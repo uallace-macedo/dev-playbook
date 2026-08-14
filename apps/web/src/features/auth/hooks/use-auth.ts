@@ -23,7 +23,6 @@ export function useAuth() {
   })
 
   async function handleLogin(data: AuthLoginInput) {
-
     try {
       setApiError(null);
       const response = await loginRequest(data);
@@ -52,6 +51,11 @@ export function useAuth() {
     }
   }
 
+  function handleLogout() {
+    storage.clearSession();
+    navigate(ROUTES.AUTH.LOGIN);
+  }
+
   return {
     apiError,
     
@@ -68,6 +72,8 @@ export function useAuth() {
       errors: registerForm.formState.errors,
       isSubmitting: registerForm.formState.isSubmitting,
       isSuccess
-    }
+    },
+
+    logout: handleLogout
   }
 }
