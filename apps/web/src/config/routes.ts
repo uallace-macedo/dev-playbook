@@ -6,6 +6,7 @@ export const ROUTES = {
   CUSTOMER: {
     HOME: '/',
     RESTAURANT: '/customer/restaurant/:id',
+    ORDERS: '/customer/orders',
   },
   RESTAURANT: {
     HOME: '/restaurant',

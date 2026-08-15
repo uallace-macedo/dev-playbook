@@ -18,6 +18,7 @@ class OrderStatus(str, Enum):
     CREATED = 'created'
     ACCEPTED = 'accepted'
     REJECTED = 'rejected'
+    CANCELED = 'canceled'
     DELIVERED = 'delivered'
 
 
@@ -59,6 +60,12 @@ class Order:
         init=False,
         server_default=func.now(),
         onupdate=func.now()
+    )
+
+    reviewed: Mapped[bool] = mapped_column(
+        init=False,
+        default=False,
+        server_default=func.false()
     )
 
     customer: Mapped['User'] = relationship(init=False)

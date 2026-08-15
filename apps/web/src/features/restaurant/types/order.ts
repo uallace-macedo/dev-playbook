@@ -10,8 +10,7 @@ export type OrderItem = {
 
 export type Order = {
   id: string;
-  customer_id?: string;
-  customer_name?: string;
+  customer: OrderCustomer;
   status: OrderStatus;
   created_at?: string;
   items: OrderItem[];
@@ -25,3 +24,8 @@ export type GetOrdersResponse = {
 export type UpdateOrderStatusDTO = {
   status: OrderStatus;
 };
+
+export type OrderCustomer = {
+  id: string;
+  name: string;
+}

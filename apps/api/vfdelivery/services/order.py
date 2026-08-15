@@ -2,7 +2,7 @@ from http import HTTPStatus
 from uuid import UUID
 
 from fastapi import HTTPException
-from sqlalchemy import exists, select
+from sqlalchemy import delete, exists, or_, select
 from sqlalchemy.orm import joinedload, selectinload
 
 from vfdelivery.core.dependencies import SessionDummy
@@ -10,7 +10,12 @@ from vfdelivery.models.order import Order, OrderStatus
 from vfdelivery.models.order_item import OrderItem
 from vfdelivery.models.product import Product
 from vfdelivery.models.restaurant import Restaurant
-from vfdelivery.schemas.order import OrderCreate, OrderFetch, OrderPatchStatus
+from vfdelivery.schemas.order import (
+    OrderBatchDelete,
+    OrderCreate,
+    OrderFetch,
+    OrderPatchStatus,
+)
 
 
 class OrderService:
@@ -197,6 +202,41 @@ class OrderService:
 
         self.session.commit()
         return self.get_order_by_id(order.id)
+
+    def batch_delete(self, data: OrderBatchDelete):
+        stmt = delete(Order).where(
+            Order.id.in_(data.orders_id),
+            or_(
+                Order.status == OrderStatus.REJECTED,
+                Order.status == OrderStatus.CANCELED
+            )
+        )
+
+        self.session.execute(stmt)
+        self.session.commit()
+
+    def cancel(self, customer_id, order_id):
+        order = self.session.scalar(
+            select(Order).where(
+                Order.customer_id == customer_id,
+                Order.id == order_id
+            )
+        )
+
+        if not order:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail='Order not found'
+            )
+
+        if order.status != OrderStatus.CREATED:
+            raise HTTPException(
+                status_code=HTTPStatus.CONFLICT,
+                detail='Cannot cancel a accepted order'
+            )
+
+        order.status = OrderStatus.CANCELED
+        self.session.commit()
 
 
 def get_order_service(session: SessionDummy) -> OrderService:

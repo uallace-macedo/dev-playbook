@@ -111,3 +111,73 @@ def test_update_order_status_fails_not_found(
 
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert response.json()['detail'] == 'Order not found'
+
+
+def test_batch_delete_orders_success(
+    client, token_restaurant, order, session
+):
+    headers = {'Authorization': f'Bearer {token_restaurant.access_token}'}
+
+    order.status = OrderStatus.REJECTED
+    session.commit()
+
+    payload = {'orders_id': [str(order.id)]}
+
+    response = client.request(
+        'DELETE',
+        f'{BASE_URL}/orders',
+        headers=headers,
+        json=payload,
+    )
+
+    assert response.status_code == HTTPStatus.NO_CONTENT
+    assert response.content == b''
+
+
+def test_batch_delete_orders_fails_unauthorized(client, order):
+    payload = {'orders_id': [str(order.id)]}
+
+    response = client.request(
+        'DELETE',
+        f'{BASE_URL}/orders',
+        json=payload,
+    )
+
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+
+
+def test_cancel_order_success(
+    client, token_customer, order
+):
+    headers = {'Authorization': f'Bearer {token_customer.access_token}'}
+
+    response = client.post(
+        f'{BASE_URL}/orders/{order.id}/cancel',
+        headers=headers,
+    )
+
+    assert response.status_code == HTTPStatus.OK
+
+
+def test_cancel_order_fails_conflict(
+    client, token_customer, order, session
+):
+    headers = {'Authorization': f'Bearer {token_customer.access_token}'}
+    order.status = OrderStatus.ACCEPTED
+    session.commit()
+
+    response = client.post(
+        f'{BASE_URL}/orders/{order.id}/cancel',
+        headers=headers,
+    )
+
+    assert response.status_code == HTTPStatus.CONFLICT
+    assert response.json()['detail'] == 'Cannot cancel a accepted order'
+
+
+def test_cancel_order_fails_unauthorized(client, order):
+    response = client.post(
+        f'{BASE_URL}/orders/{order.id}/cancel'
+    )
+
+    assert response.status_code == HTTPStatus.UNAUTHORIZED

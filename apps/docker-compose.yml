@@ -29,6 +29,7 @@ services:
       POSTGRES_HOST: vfdelivery_db
       POSTGRES_PORT: 5432
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-vfdelivery}:${POSTGRES_PASSWORD:-vfdelivery_pass}@vfdelivery_db:5432/${POSTGRES_DB:-vfdelivery_db}
+      WEB_URL: http://localhost
     ports:
       - "8000:8000"
     depends_on:
@@ -37,6 +38,16 @@ services:
     volumes:
       - ./api:/app
       - /app/.venv
+
+  vfdelivery_web:
+    build:
+      context: .
+      dockerfile: ./web/Dockerfile
+    container_name: vfdelivery_web
+    ports:
+      - "80:80"
+    depends_on:
+      - vfdelivery_api
 
 volumes:
   postgres_data:

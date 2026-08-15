@@ -5,7 +5,12 @@ import pytest
 from fastapi import HTTPException
 
 from vfdelivery.models.order import Order, OrderStatus
-from vfdelivery.schemas.order import OrderCreate, OrderFetch, OrderPatchStatus
+from vfdelivery.schemas.order import (
+    OrderBatchDelete,
+    OrderCreate,
+    OrderFetch,
+    OrderPatchStatus,
+)
 from vfdelivery.schemas.order_item import OrderItemCreate
 from vfdelivery.services.order import get_order_service
 
@@ -123,3 +128,64 @@ def test_update_status_fails_order_not_found(session, user_restaurant):
 
     assert exc_info.value.status_code == HTTPStatus.NOT_FOUND
     assert exc_info.value.detail == 'Order not found'
+
+
+def test_batch_delete_orders_success(session, order):
+    service = get_order_service(session)
+    order.status = OrderStatus.REJECTED
+    session.commit()
+
+    data = OrderBatchDelete(orders_id=[order.id])
+
+    service.batch_delete(data)
+    deleted_order = session.get(Order, order.id)
+    assert deleted_order is None
+
+
+def test_batch_delete_orders_empty_or_non_existent_ids(session, order):
+    service = get_order_service(session)
+    data = OrderBatchDelete(orders_id=[uuid.uuid4()])
+    service.batch_delete(data)
+
+    existing_order = session.get(Order, order.id)
+    assert existing_order is not None
+
+
+def test_batch_delete_orders_ignores_active_orders(session, order):
+    service = get_order_service(session)
+    data = OrderBatchDelete(orders_id=[order.id])
+
+    service.batch_delete(data)
+    saved_order = session.get(Order, order.id)
+    assert saved_order is not None
+
+
+def test_cancel_order_success(session, user, order):
+    service = get_order_service(session)
+    service.cancel(customer_id=user.id, order_id=order.id)
+    session.refresh(order)
+    assert order.status == OrderStatus.CANCELED
+
+
+def test_cancel_order_fails_not_found(session, user):
+    service = get_order_service(session)
+    fake_order_id = uuid.uuid4()
+
+    with pytest.raises(HTTPException) as exc_info:
+        service.cancel(customer_id=user.id, order_id=fake_order_id)
+
+    assert exc_info.value.status_code == HTTPStatus.NOT_FOUND
+    assert exc_info.value.detail == 'Order not found'
+
+
+def test_cancel_order_fails_conflict_invalid_status(session, user, order):
+    service = get_order_service(session)
+
+    order.status = OrderStatus.ACCEPTED
+    session.commit()
+
+    with pytest.raises(HTTPException) as exc_info:
+        service.cancel(customer_id=user.id, order_id=order.id)
+
+    assert exc_info.value.status_code == HTTPStatus.CONFLICT
+    assert exc_info.value.detail == 'Cannot cancel a accepted order'

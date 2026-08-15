@@ -58,6 +58,7 @@ class OrderPublic(BaseModel):
     total_price: float
     created_at: datetime
     updated_at: datetime
+    reviewed: bool
 
     customer: OrderCustomerPublic
     restaurant: OrderRestaurantPublic
@@ -68,3 +69,7 @@ class OrderPublic(BaseModel):
 
 class OrderList(BaseModel):
     orders: list[OrderPublic]
+
+
+class OrderBatchDelete(BaseModel):
+    orders_id: list[UUID]
