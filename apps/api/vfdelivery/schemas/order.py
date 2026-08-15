@@ -58,6 +58,7 @@ class OrderPublic(BaseModel):
     total_price: float
     created_at: datetime
     updated_at: datetime
+    reviewed: bool
 
     customer: OrderCustomerPublic
     restaurant: OrderRestaurantPublic

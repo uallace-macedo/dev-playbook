@@ -60,6 +60,7 @@ class ReviewService:
             comment=data.comment,
         )
 
+        order.reviewed = True
         self.session.add(review)
         self.session.commit()
         self.session.refresh(review)

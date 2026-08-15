@@ -62,6 +62,12 @@ class Order:
         onupdate=func.now()
     )
 
+    reviewed: Mapped[bool] = mapped_column(
+        init=False,
+        default=False,
+        server_default=func.false()
+    )
+
     customer: Mapped['User'] = relationship(init=False)
     restaurant: Mapped['Restaurant'] = relationship(init=False)
     items: Mapped[List['OrderItem']] = relationship(init=False)
