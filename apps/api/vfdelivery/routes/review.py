@@ -21,7 +21,7 @@ review_fetch_data = Annotated[ReviewFetch, Query()]
 
 
 @router.post(
-    '/orders/{order_id}/reviews',  # Atualizado para o plural /reviews
+    '/orders/{order_id}/reviews',
     status_code=HTTPStatus.CREATED,
     response_model=ReviewPublic,
 )
@@ -47,7 +47,7 @@ def create_review(
 def get_reviews_by_restaurant(
     restaurant_id: UUID,
     queries: review_fetch_data,
-    service: review_service,  # Removido 'current_user' para permitir acesso público
+    service: review_service,
 ):
     """Get reviews by restaurant ID (Public Endpoint)"""
     return service.get_reviews_by_restaurant_id(restaurant_id, queries)

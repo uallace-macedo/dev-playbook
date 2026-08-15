@@ -18,6 +18,7 @@ class OrderStatus(str, Enum):
     CREATED = 'created'
     ACCEPTED = 'accepted'
     REJECTED = 'rejected'
+    CANCELED = 'canceled'
     DELIVERED = 'delivered'
 
 

@@ -68,3 +68,7 @@ class OrderPublic(BaseModel):
 
 class OrderList(BaseModel):
     orders: list[OrderPublic]
+
+
+class OrderBatchDelete(BaseModel):
+    orders_id: list[UUID]

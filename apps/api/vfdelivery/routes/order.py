@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, Query
 
 from vfdelivery.core.dependencies import CurrentUser, RequireRestaurantOwner
 from vfdelivery.schemas.order import (
+    OrderBatchDelete,
     OrderCreate,
     OrderFetch,
     OrderList,
@@ -114,3 +115,29 @@ def update_status(
         order_id=order_id,
         data=data,
     )
+
+
+@router.post(
+    '/orders/{order_id}/cancel',
+    status_code=HTTPStatus.OK
+)
+def cancel(
+    order_id: UUID,
+    current_user: CurrentUser,
+    service: order_service
+):
+    """Cancel a `NOT ACCEPTED` order"""
+    service.cancel(current_user.sub, order_id)
+
+
+@router.delete(
+    '/orders',
+    status_code=HTTPStatus.NO_CONTENT
+)
+def batch_delete(
+    data: OrderBatchDelete,
+    current_user: RequireRestaurantOwner,
+    service: order_service,
+):
+    """Batch delete `CANCELED` or `DECLINED` orders"""
+    service.batch_delete(data)
