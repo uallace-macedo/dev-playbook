@@ -2,7 +2,7 @@ from http import HTTPStatus
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query, Response
+from fastapi import APIRouter, Depends, Query
 
 from vfdelivery.core.dependencies import RequireRestaurantOwner
 from vfdelivery.schemas.product import (
@@ -92,5 +92,3 @@ def delete_product(
         restaurant_id=restaurant_id,
         product_id=product_id,
     )
-
-    return Response(status_code=HTTPStatus.NO_CONTENT)

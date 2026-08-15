@@ -153,37 +153,34 @@ def test_update_product_partial_success(
 
 def test_update_product_fails_restaurant_not_found(session, user_restaurant, product):
     service = get_product_service(session)
-    new_price = 25.00
-    update_data = ProductUpdate(price=new_price)
+    data = ProductUpdate(price=30.00)
 
     with pytest.raises(HTTPException) as exc_info:
         service.update(
-            user_restaurant.id,
-            uuid.uuid4(),
-            product.id,
-            update_data,
+            owner_id=user_restaurant.id,
+            restaurant_id=uuid.uuid4(),
+            product_id=product.id,
+            data=data,
         )
 
     assert exc_info.value.status_code == HTTPStatus.NOT_FOUND
-    assert exc_info.value.detail == 'Product not found'
+    assert exc_info.value.detail == 'Restaurant not found'
 
 
-def test_update_product_fails_not_owner(session, restaurant_owned, product):
+def test_update_product_fails_not_owner(session, user, restaurant_owned, product):
     service = get_product_service(session)
-    new_price = 25.00
-    update_data = ProductUpdate(price=new_price)
-    different_owner_id = uuid.uuid4()
+    data = ProductUpdate(price=30.00)
 
     with pytest.raises(HTTPException) as exc_info:
         service.update(
-            different_owner_id,
-            restaurant_owned.id,
-            product.id,
-            update_data,
+            owner_id=user.id,
+            restaurant_id=restaurant_owned.id,
+            product_id=product.id,
+            data=data,
         )
 
     assert exc_info.value.status_code == HTTPStatus.NOT_FOUND
-    assert exc_info.value.detail == 'Product not found'
+    assert exc_info.value.detail == 'Restaurant not found'
 
 
 def test_update_product_fails_product_not_found(

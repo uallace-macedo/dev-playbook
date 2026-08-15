@@ -81,13 +81,23 @@ class ProductService:
         product_id: UUID,
         data: ProductUpdate
     ) -> Product:
-        product = self.session.scalar(
-            select(Product)
-            .join(Restaurant, Product.restaurant_id == restaurant_id)
-            .where(
-                Product.id == product_id,
-                Product.restaurant_id == restaurant_id,
+        restaurant_exists = self.session.scalar(
+            select(exists(Restaurant).where(
+                Restaurant.id == restaurant_id,
                 Restaurant.owner_id == owner_id
+            ))
+        )
+
+        if not restaurant_exists:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail='Restaurant not found'
+            )
+
+        product = self.session.scalar(
+            select(Product).where(
+                Product.id == product_id,
+                Product.restaurant_id == restaurant_id
             )
         )
 
@@ -102,7 +112,8 @@ class ProductService:
             product_exists = self.session.scalar(
                 select(exists(Product).where(
                     Product.name.ilike(f'%{new_name}%'),
-                    Product.restaurant_id == restaurant_id
+                    Product.restaurant_id == restaurant_id,
+                    Product.id != product_id
                 ))
             )
 

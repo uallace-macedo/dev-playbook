@@ -104,9 +104,8 @@ def test_update_product_success(client, token_restaurant, restaurant_owned, prod
     new_price = 28.50
 
     response = client.patch(
-        f'{BASE_URL}/products/{product.id}',
+        f'{BASE_URL}/restaurants/{restaurant_owned.id}/products/{product.id}',
         headers={'Authorization': f'Bearer {token_restaurant.access_token}'},
-        params={'restaurant_id': str(restaurant_owned.id)},
         json={
             'name': 'X-Burguer Updated',
             'price': new_price,
@@ -124,9 +123,8 @@ def test_update_product_fails_no_valid_role(
     client, token_customer, restaurant_owned, product
 ):
     response = client.patch(
-        f'{BASE_URL}/products/{product.id}',
+        f'{BASE_URL}/restaurants/{restaurant_owned.id}/products/{product.id}',
         headers={'Authorization': f'Bearer {token_customer.access_token}'},
-        params={'restaurant_id': str(restaurant_owned.id)},
         json={'price': 25.00},
     )
 
@@ -140,9 +138,8 @@ def test_update_product_fails_restaurant_not_found(
     random_restaurant_id = uuid4()
 
     response = client.patch(
-        f'{BASE_URL}/products/{product.id}',
+        f'{BASE_URL}/restaurants/{random_restaurant_id}/products/{product.id}',
         headers={'Authorization': f'Bearer {token_restaurant.access_token}'},
-        params={'restaurant_id': str(random_restaurant_id)},
         json={'price': 25.00},
     )
 
@@ -156,9 +153,8 @@ def test_update_product_fails_product_not_found(
     random_product_id = uuid4()
 
     response = client.patch(
-        f'{BASE_URL}/products/{random_product_id}',
+        f'{BASE_URL}/restaurants/{restaurant_owned.id}/products/{random_product_id}',
         headers={'Authorization': f'Bearer {token_restaurant.access_token}'},
-        params={'restaurant_id': str(restaurant_owned.id)},
         json={'price': 25.00},
     )
 
@@ -170,9 +166,8 @@ def test_update_product_fails_name_already_taken(
     client, token_restaurant, restaurant_owned, product, product_alt
 ):
     response = client.patch(
-        f'{BASE_URL}/products/{product_alt.id}',
+        f'{BASE_URL}/restaurants/{restaurant_owned.id}/products/{product_alt.id}',
         headers={'Authorization': f'Bearer {token_restaurant.access_token}'},
-        params={'restaurant_id': str(restaurant_owned.id)},
         json={'name': product.name},
     )
 
@@ -184,9 +179,8 @@ def test_delete_product_success(
     client, token_restaurant, restaurant_owned, product, session
 ):
     response = client.delete(
-        f'{BASE_URL}/products/{product.id}',
+        f'{BASE_URL}/restaurants/{restaurant_owned.id}/products/{product.id}',
         headers={'Authorization': f'Bearer {token_restaurant.access_token}'},
-        params={'restaurant_id': str(restaurant_owned.id)},
     )
 
     assert response.status_code == HTTPStatus.NO_CONTENT
@@ -198,40 +192,10 @@ def test_delete_product_fails_no_valid_role(
     client, token_customer, restaurant_owned, product
 ):
     response = client.delete(
-        f'{BASE_URL}/products/{product.id}',
+        f'{BASE_URL}/restaurants/{restaurant_owned.id}/products/{product.id}',
         headers={'Authorization': f'Bearer {token_customer.access_token}'},
-        params={'restaurant_id': str(restaurant_owned.id)},
     )
 
     assert response.status_code == HTTPStatus.FORBIDDEN
     assert response.json()['detail'] == 'Access denied'
-
-
-def test_delete_product_fails_restaurant_not_found(
-    client, token_restaurant, product
-):
-    random_restaurant_id = uuid4()
-
-    response = client.delete(
-        f'{BASE_URL}/products/{product.id}',
-        headers={'Authorization': f'Bearer {token_restaurant.access_token}'},
-        params={'restaurant_id': str(random_restaurant_id)},
-    )
-
-    assert response.status_code == HTTPStatus.NOT_FOUND
-    assert response.json()['detail'] == 'Restaurant not found'
-
-
-def test_delete_product_fails_product_not_found(
-    client, token_restaurant, restaurant_owned
-):
-    random_product_id = uuid4()
-
-    response = client.delete(
-        f'{BASE_URL}/products/{random_product_id}',
-        headers={'Authorization': f'Bearer {token_restaurant.access_token}'},
-        params={'restaurant_id': str(restaurant_owned.id)},
-    )
-
-    assert response.status_code == HTTPStatus.NOT_FOUND
-    assert response.json()['detail'] == 'Product not found'
+    
