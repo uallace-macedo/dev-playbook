@@ -41,11 +41,19 @@ export function useCartState() {
 
     setItems((prevItems) => {
       const existingIndex = prevItems.findIndex((item) => item.product.id === product.id);
+
       if (existingIndex >= 0) {
-        const updated = [...prevItems];
-        updated[existingIndex].quantity += 1;
-        return updated;
+        return prevItems.map((item, index) => {
+          if (index === existingIndex) {
+            return {
+              ...item,
+              quantity: item.quantity + 1,
+            };
+          }
+          return item;
+        });
       }
+
       return [...prevItems, { product, quantity: 1 }];
     });
   }
@@ -63,6 +71,7 @@ export function useCartState() {
       removeFromCart(productId);
       return;
     }
+
     setItems((prev) =>
       prev.map((item) => (item.product.id === productId ? { ...item, quantity } : item))
     );

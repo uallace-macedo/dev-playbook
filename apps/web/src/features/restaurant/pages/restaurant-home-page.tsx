@@ -11,11 +11,7 @@ export function RestaurantHomePage() {
 
   return (
     <div className="h-dvh w-full flex flex-col bg-slate-950 text-slate-100 font-sans overflow-hidden">
-      
-      {/* Header com Logout e Botão de Novo Restaurante */}
       <RestaurantHeader onOpenCreateModal={() => setIsModalOpen(true)} />
-
-      {/* Conteúdo Principal */}
       <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 flex flex-col min-h-0 overflow-y-auto no-scrollbar">
         <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>

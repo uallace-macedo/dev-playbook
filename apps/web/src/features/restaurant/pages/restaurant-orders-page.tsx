@@ -22,8 +22,6 @@ export function RestaurantOrdersPage() {
 
   return (
     <div className="h-dvh w-full flex flex-col bg-slate-950 text-slate-100 font-sans overflow-hidden">
-      
-      {/* Header */}
       <header className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md shrink-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">

@@ -1,12 +1,16 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Star } from 'lucide-react';
-import { useRestaurantMenu } from '../hook/use-restaurant-menu';
+import { ArrowLeft, Star, ShoppingBag } from 'lucide-react';
+import { useRestaurantMenu } from '../hooks/use-restaurant-menu';
 import { CustomerHeader } from '../components/customer-header';
 import { ProductCard } from '../components/product-card';
+import { CartDrawer } from '../components/cart-drawer';
+import { useCart } from '@/context/cart-context';
 
 export function RestaurantDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const {
     restaurant,
@@ -20,9 +24,12 @@ export function RestaurantDetailsPage() {
     prevPage,
   } = useRestaurantMenu(id || '');
 
+  const { addToCart, totalItemsCount, totalAmount } = useCart();
+
   return (
-    <div className="h-dvh w-full flex flex-col bg-slate-950 text-slate-100 font-sans overflow-hidden">
+    <div className="h-dvh w-full flex flex-col bg-slate-950 text-slate-100 font-sans overflow-hidden relative">
       <CustomerHeader />
+
       <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-4 flex-1 flex flex-col min-h-0">
         <button
           onClick={() => navigate(-1)}
@@ -78,12 +85,20 @@ export function RestaurantDetailsPage() {
               <p className="text-slate-400 text-sm">Nenhum produto encontrado neste cardápio.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-20">
               {products.map((product) => (
                 <ProductCard
                   key={product.id}
                   product={product}
-                  onAddToCart={(item) => console.log('Adicionou:', item)}
+                  onAddToCart={(item) => {
+                    if (restaurant) {
+                      addToCart(
+                        { ...item, restaurant_id: restaurant.id },
+                        restaurant.id,
+                        restaurant.name
+                      );
+                    }
+                  }}
                 />
               ))}
             </div>
@@ -112,6 +127,34 @@ export function RestaurantDetailsPage() {
           </button>
         </footer>
       </main>
+
+      {totalItemsCount > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-full max-w-md px-4">
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3.5 px-5 rounded-2xl shadow-xl shadow-orange-500/20 flex items-center justify-between transition-all transform active:scale-95"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="bg-white/20 px-2.5 py-0.5 rounded-lg text-xs font-black">
+                {totalItemsCount}
+              </div>
+              <div className="flex items-center gap-2">
+                <ShoppingBag className="w-4 h-4" />
+                <span className="text-sm">Ver carrinho</span>
+              </div>
+            </div>
+
+            <span className="text-sm font-black">
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(totalAmount)}
+            </span>
+          </button>
+        </div>
+      )}
+
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </div>
   );
 }

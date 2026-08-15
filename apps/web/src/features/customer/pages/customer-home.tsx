@@ -1,4 +1,4 @@
-import { useRestaurants } from '../hook/use-restaurants';
+import { useRestaurants } from '../hooks/use-restaurants';
 import { RestaurantCard } from '../components/restaurant-card';
 import { CustomerHeader } from '../components/customer-header';
 
