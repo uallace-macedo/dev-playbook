@@ -32,31 +32,31 @@ Planejamento e regras do sistema disponíveis em `.docs/`:
 
 ## 🔄 Fluxo do Pedido
 
-'''text
+```text
 [CREATED] ──► [ACCEPTED] ──► [DELIVERED] ──► [REVIEWED]
     │
     └──► [REJECTED]
-'''
+```
 
 ---
 
 ## 🚀 Como Executar
 
 ### 1. Clonar o repositório
-'''bash
+```bash
 git clone https://github.com/uallace-macedo/vfdelivery.git
 cd vfdelivery
-'''
+```
 
 ### 2. Configurar o `.env`
-'''bash
+```bash
 cp .env.example .env
-'''
+```
 
 ### 3. Subir com Docker
-'''bash
+```bash
 docker compose up -d --build
-'''
+```
 
 ---
 
