@@ -6,12 +6,17 @@ import { OrderCard } from '../components/order-card';
 import type { OrderStatus } from '../types/order';
 import { ROUTES } from '@/config/routes';
 
+type Tab = {
+  id: string;
+  label: string;
+  count: number
+}
+
 export function RestaurantOrdersPage() {
   const { restaurantId } = useParams<{ restaurantId: string }>();
   const navigate = useNavigate();
   
-  const { orders, isLoading, updatingOrderId, error, changeStatus, refetch } =
-    useRestaurantOrders(restaurantId || '');
+  const { orders, isLoading, updatingOrderId, error, changeStatus, refetch } = useRestaurantOrders(restaurantId || '');
 
   const [activeTab, setActiveTab] = useState<'all' | OrderStatus>('all');
 
@@ -19,6 +24,13 @@ export function RestaurantOrdersPage() {
     if (activeTab === 'all') return true;
     return order.status === activeTab;
   });
+
+  const tabs: Tab[] = [
+    { id: 'all', label: 'Todos', count: orders.length },
+    {id: 'created', label: 'Pendentes', count: orders.filter((o) => o.status === 'created').length},
+    {id: 'accepted', label: 'Em Preparo', count: orders.filter((o) => o.status === 'accepted').length},
+    {id: 'delivered', label: 'Entregues', count: orders.filter((o) => o.status === 'delivered').length}
+  ]
 
   return (
     <div className="h-dvh w-full flex flex-col bg-slate-950 text-slate-100 font-sans overflow-hidden">
@@ -54,45 +66,30 @@ export function RestaurantOrdersPage() {
         </div>
       </header>
 
-      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 flex flex-col min-h-0 overflow-y-auto no-scrollbar">
-        <div className="flex items-center gap-2 border-b border-slate-800 pb-4 mb-6 overflow-x-auto no-scrollbar">
-          {[
-            { id: 'all', label: 'Todos', count: orders.length },
-            {
-              id: 'created',
-              label: 'Pendentes',
-              count: orders.filter((o) => o.status === 'created').length,
-            },
-            {
-              id: 'accepted',
-              label: 'Em Preparo',
-              count: orders.filter((o) => o.status === 'accepted').length,
-            },
-            {
-              id: 'delivered',
-              label: 'Entregues',
-              count: orders.filter((o) => o.status === 'delivered').length,
-            },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`py-2 px-4 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap ${
-                activeTab === tab.id
-                  ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20'
-                  : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-              }`}
-            >
-              <span>{tab.label}</span>
-              <span
-                className={`px-1.5 py-0.5 rounded-md text-[10px] ${
-                  activeTab === tab.id ? 'bg-orange-600 text-white' : 'bg-slate-800 text-slate-400'
+      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 flex flex-col min-h-0 overflow-y-auto no-scrollbar">
+        <div className="sticky top-0 z-20 bg-slate-950 py-3 mb-8 border-b border-slate-800 -mx-4 px-4 sm:-mx-6 sm:px-6">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`shrink-0 py-2 px-4 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20'
+                    : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
                 }`}
               >
-                {tab.count}
-              </span>
-            </button>
-          ))}
+                <span>{tab.label}</span>
+                <span
+                  className={`px-1.5 py-0.5 rounded-md text-[10px] ${
+                    activeTab === tab.id ? 'bg-orange-600 text-white' : 'bg-slate-800 text-slate-400'
+                  }`}
+                >
+                  {tab.count}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {error && (

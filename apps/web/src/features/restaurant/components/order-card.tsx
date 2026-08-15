@@ -1,4 +1,4 @@
-import { CheckCircle2, XCircle, Truck, Loader2, Utensils } from 'lucide-react';
+import { CheckCircle2, XCircle, Truck, Loader2, Utensils, User } from 'lucide-react';
 import type { Order, OrderStatus } from '../types/order';
 
 type OrderCardProps = {
@@ -42,6 +42,8 @@ export function OrderCard({ order, onStatusChange, isUpdating }: OrderCardProps)
     order.items?.reduce((acc, item) => acc + (item.unit_price || 0) * item.quantity, 0) ??
     0;
 
+
+  console.log(order)
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col justify-between hover:border-slate-700 transition">
       <div>
@@ -50,11 +52,12 @@ export function OrderCard({ order, onStatusChange, isUpdating }: OrderCardProps)
             <span className="text-xs text-slate-500 font-mono">
               #{order.id.slice(0, 8)}
             </span>
-            {order.customer_name && (
-              <h4 className="text-sm font-bold text-white mt-0.5">
-                {order.customer_name}
-              </h4>
-            )}
+            <div className="flex items-center gap-2 mt-1">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 text-xs font-semibold text-slate-200">
+                <User className="w-3.5 h-3.5 text-orange-400" />
+                <span>{order.customer.name}</span>
+              </span>
+            </div>
           </div>
           <span
             className={`text-xs font-bold px-2.5 py-1 rounded-full border uppercase tracking-wider ${statusBadge.bg}`}

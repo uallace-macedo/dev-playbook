@@ -8,13 +8,31 @@ export type CreateOrderPayload = {
   items: CreateOrderItemPayload[];
 };
 
-export type OrderStatus = 'created' | 'accepted' | 'rejected' | 'delivered';
+export type OrderStatus = 'created' | 'accepted' | 'rejected' | 'delivered' | 'canceled';
 
-export type CustomerOrder = {
+export interface OrderItem {
   id: string;
-  restaurant_id: string;
-  restaurant_name?: string;
+  product_id: string;
+  product_name: string;
+  quantity: number;
+  unit_price: number;
+  subtotal: number;
+}
+
+export interface CustomerOrder {
+  id: string;
   status: OrderStatus;
-  created_at?: string;
-  total_price?: number;
-};
+  total_price: number;
+  created_at: string;
+  updated_at: string;
+  reviewed: boolean;
+  customer: {
+    id: string;
+    name: string;
+  };
+  restaurant: {
+    id: string;
+    name: string;
+  };
+  items: OrderItem[];
+}

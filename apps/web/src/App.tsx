@@ -11,6 +11,7 @@ import { RestaurantHomePage } from './features/restaurant/pages/restaurant-home-
 import { RestaurantProductsPage } from './features/restaurant/pages/restaurant-products-page';
 import { RestaurantOrdersPage } from './features/restaurant/pages/restaurant-orders-page';
 import { CartProvider } from './context/cart-context';
+import { CustomerOrdersPage } from './features/customer/pages/customer-orders';
 
 export default function App() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
             <Route element={<ProtectedRoute />}>
               <Route path={ROUTES.CUSTOMER.HOME} element={<CustomerHome />} />
               <Route path={ROUTES.CUSTOMER.RESTAURANT} element={<RestaurantDetailsPage />} />
+              <Route path={ROUTES.CUSTOMER.ORDERS} element={<CustomerOrdersPage />} />
 
               <Route path={ROUTES.RESTAURANT.HOME} element={<RestaurantHomePage />} />
               <Route path={ROUTES.RESTAURANT.PRODUCTS} element={<RestaurantProductsPage />} />
