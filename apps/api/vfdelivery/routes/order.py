@@ -1,0 +1,143 @@
+from http import HTTPStatus
+from typing import Annotated
+from uuid import UUID
+
+from fastapi import APIRouter, Depends, Query
+
+from vfdelivery.core.dependencies import CurrentUser, RequireRestaurantOwner
+from vfdelivery.schemas.order import (
+    OrderBatchDelete,
+    OrderCreate,
+    OrderFetch,
+    OrderList,
+    OrderPatchStatus,
+    OrderPublic,
+)
+from vfdelivery.services.order import OrderService, get_order_service
+
+router = APIRouter(
+    tags=['Orders'],
+)
+
+order_service = Annotated[OrderService, Depends(get_order_service)]
+order_fetch_data = Annotated[OrderFetch, Query()]
+
+
+@router.post(
+    '/restaurants/{restaurant_id}/orders',
+    status_code=HTTPStatus.CREATED,
+    response_model=OrderPublic,
+)
+def create(
+    restaurant_id: UUID,
+    data: OrderCreate,
+    current_user: CurrentUser,
+    service: order_service,
+):
+    """Creates an order for a specific restaurant (Requires Customer Authentication)"""
+    return service.create(
+        customer_id=current_user.sub,
+        restaurant_id=restaurant_id,
+        data=data,
+    )
+
+
+@router.get(
+    '/restaurants/{restaurant_id}/orders',
+    status_code=HTTPStatus.OK,
+    response_model=OrderList,
+)
+def get_orders_by_restaurant(
+    restaurant_id: UUID,
+    queries: order_fetch_data,
+    current_user: RequireRestaurantOwner,
+    service: order_service,
+):
+    """Get all orders from a restaurant (Requires Restaurant Owner Authentication)"""
+    orders = service.get_orders_by_restaurant_id(
+        owner_id=current_user.sub,
+        restaurant_id=restaurant_id,
+        options=queries,
+    )
+
+    return OrderList(orders=orders)
+
+
+@router.get(
+    '/orders/me',
+    status_code=HTTPStatus.OK,
+    response_model=OrderList,
+)
+def get_my_orders(
+    queries: order_fetch_data,
+    current_user: CurrentUser,
+    service: order_service,
+):
+    """List all orders for the current logged-in customer"""
+    orders = service.get_orders_by_customer_id(
+        customer_id=current_user.sub,
+        options=queries,
+    )
+    return OrderList(orders=orders)
+
+
+@router.get(
+    '/orders/{order_id}',
+    status_code=HTTPStatus.OK,
+    response_model=OrderPublic,
+)
+def get_order_by_id(
+    order_id: UUID,
+    current_user: CurrentUser,
+    service: order_service,
+):
+    """Get order details (Accessible by Customer or Restaurant Owner)"""
+    return service.get_order_by_id_for_user(
+        order_id=order_id,
+        user_id=current_user.sub,
+    )
+
+
+@router.patch(
+    '/orders/{order_id}/status',
+    status_code=HTTPStatus.OK,
+    response_model=OrderPublic,
+)
+def update_status(
+    order_id: UUID,
+    data: OrderPatchStatus,
+    current_user: RequireRestaurantOwner,
+    service: order_service,
+):
+    """Update order status (Requires Restaurant Owner Authentication)"""
+    return service.update_status(
+        owner_id=current_user.sub,
+        order_id=order_id,
+        data=data,
+    )
+
+
+@router.post(
+    '/orders/{order_id}/cancel',
+    status_code=HTTPStatus.OK
+)
+def cancel(
+    order_id: UUID,
+    current_user: CurrentUser,
+    service: order_service
+):
+    """Cancel a `NOT ACCEPTED` order"""
+    service.cancel(current_user.sub, order_id)
+
+
+@router.delete(
+    '/orders',
+    status_code=HTTPStatus.NO_CONTENT
+)
+def batch_delete(
+    data: OrderBatchDelete,
+    current_user: RequireRestaurantOwner,
+    service: order_service,
+):
+    """Batch delete `CANCELED` or `DECLINED` orders"""
+    service.batch_delete(data)
